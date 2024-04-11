@@ -35,6 +35,8 @@ public abstract class IEnemyBehaviour : MonoBehaviour
 
     public float faceDirection => target.x - transform.position.x;
 
+
+
     public void onStart()
     {
         // Find and store a reference to the player's transform

@@ -179,6 +179,7 @@ GameObject:
   - component: {fileID: 2763678609926967749}
   - component: {fileID: 8273063918292087109}
   - component: {fileID: 6261865408343592964}
+  - component: {fileID: 7471562346707688231}
   m_Layer: 0
   m_Name: Mon001_lv1
   m_TagString: Monster
@@ -272,7 +273,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6424028249667486859}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c9118f56df1d4187afdc323b2cc9900, type: 3}
   m_Name: 
@@ -292,5 +293,39 @@ MonoBehaviour:
   updateRate: 2
   plane: {fileID: 0}
   monsterSkin: {fileID: 2800000, guid: 30fd63930318f49648e90633a82a9782, type: 3}
+  attackPlane: {fileID: 4723159045283505926}
+  attackSkin: {fileID: 2800000, guid: 11d3209b8263546d5aa2592c5906c3b9, type: 3}
+--- !u!114 &7471562346707688231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424028249667486859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c19fda26829de41d683a6feb1b3e608c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 5
+  maxHealth: 5
+  attackDamage: 1
+  inAttack: 0
+  inAttackRange: 0
+  attackRange: 1.35
+  attackCD: 1.5
+  inDefense: 0
+  defenseCD: 0
+  isPaused: 0
+  target: {x: 0, y: 0, z: 0}
+  moveSpeed: 8.5
+  updateRate: 2
+  plane: {fileID: 0}
+  monsterSkin: {fileID: 2800000, guid: 30fd63930318f49648e90633a82a9782, type: 3}
+  isPlayerDetected: 0
+  detectionRange: 2
+  attentionTimeout: 5
+  attentionTimer: 0
+  patrolPoints: []
   attackPlane: {fileID: 4723159045283505926}
   attackSkin: {fileID: 2800000, guid: 11d3209b8263546d5aa2592c5906c3b9, type: 3}

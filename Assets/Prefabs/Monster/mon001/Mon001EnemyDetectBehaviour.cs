@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class Mon001EnemyBehaviour : IEnemyBehaviour
+public class Mon001EnemyDetectBehaviour : IEnemyDetectBehaviour
 {
     public GameObject attackPlane;
     public Texture attackSkin;
@@ -19,7 +19,6 @@ public class Mon001EnemyBehaviour : IEnemyBehaviour
     private void Update()
     {
         onUpdate();
-        AttackPhase();
     }
 
     public override IEnumerator Attack()
@@ -51,15 +50,4 @@ public class Mon001EnemyBehaviour : IEnemyBehaviour
         inAttackRange = false;
     }
 
-    private float Timer = 0;
-
-    public void AttackPhase()
-    {
-        Timer += Time.deltaTime;
-        if (Vector3.Distance(transform.position, target) < attackRange && Timer > attackCD)
-        {
-            inAttackRange = true;
-            Timer = 0;
-        }
-    }
 }
