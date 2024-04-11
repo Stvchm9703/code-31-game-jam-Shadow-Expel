@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
-using Unity.Physics;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using Ray = UnityEngine.Ray;
@@ -25,7 +23,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     public int defenseCD;
 
     //
-    public bool isPaused = false;
+    public bool isPaused;
 
     public Vector3 target; // Reference to the player's transform
     public float moveSpeed = 7.5f; // Speed at which the enemy moves towards the player
@@ -35,201 +33,177 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public Texture monsterSkin;
 
-
-    public float faceDirection => target.x - transform.position.x;
-    
     // enemy detection range
-    [SerializeField] private bool isPlayerDetected = false;
+    [SerializeField]
+    private bool isPlayerDetected;
+
     public float detectionRange = 2f;
     public float attentionTimeout = 5f;
-    [SerializeField] private float attentionTimer = 0f;
-    private Ray lookingRay;
+
+    [SerializeField]
+    private float attentionTimer;
     // public Vector3 lookingDirection => this.lookingRay.direction;
 
     public List<Vector3> patrolPoints;
-    
+
+    // ---
+
+    private readonly RaycastHit[] _lookingRaycastHits = new RaycastHit[5];
+
     private Vector3 lastPosition;
-    
-    public void onStart()
-    {
-        // Find and store a reference to the player's transform
-        plane = transform.Find("Plane").gameObject;
-        // StartCoroutine("UpdateTarget");
-        if (monsterSkin != null)
-        {
-            plane.GetComponent<Renderer>().material.SetTexture("_character_texture", monsterSkin);
-        }
+    private Ray lookingRay;
 
-        this.target = this.transform.position;
-        this.lookingRay = new Ray(transform.position, transform.forward);
-        StartCoroutine("CoroutineUpdate");
-        Debug.DrawRay(transform.position, transform.forward * 10, Color.green);
-    }
 
-    public void onUpdate()
-    {
-        if (isPaused == false)
-        {
-          
-            
-            Move(Time.deltaTime);
-            
-            DetectPlayer(Time.deltaTime);
-            CheckAttack();
-            Debug.DrawRay(lookingRay.origin, lookingRay.direction * this.detectionRange, Color.red);
-
-        }
-    }   
-    public IEnumerator CoroutineUpdate()
-    {
-        while (true)
-        {
-            if (isPaused == false)
-            {
-                if (inAttackRange)
-                {
-                    StartCoroutine("Attack");
-                }
-                else if (inDefense)
-                {
-                    StartCoroutine("Defend");
-                }
-                else if (!this.isPlayerDetected)
-                {
-                    // updateTime *= 2;
-                    StartCoroutine("CausalBehaviour");
-                }
-                else
-                {
-                    UpdateTarget();
-                }
-            }
-            Debug.Log("CoroutineUpdate");
-            yield return new WaitForSeconds(this.updateRate);
-        }
-    }
+    public float faceDirection => this.target.x - this.transform.position.x;
 
     // body collider
-    void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter(Collision collision)
     {
         // Check if the enemy collided with the player
         if (collision.gameObject.tag == "Player" && this.inAttack)
         {
             // Deal damage to the player
             // ...
-            
         }
         else if (collision.gameObject.tag == "AttackHitbox")
         {
             // Deal damage to the enemy
             // ...
-            TakeDamage();
+            this.TakeDamage();
         }
     }
 
-    // ---
+    public void onStart()
+    {
+        // Find and store a reference to the player's transform
+        this.plane = this.transform.Find("Plane").gameObject;
+        // StartCoroutine("UpdateTarget");
+        if (this.monsterSkin != null) this.plane.GetComponent<Renderer>().material.SetTexture("_character_texture", this.monsterSkin);
 
-    private readonly RaycastHit[] _lookingRaycastHits = new RaycastHit[5];
+        this.target = this.transform.position;
+        this.lookingRay = new Ray(this.transform.position, this.transform.forward);
+        this.StartCoroutine("CoroutineUpdate");
+    }
+
+    public void onUpdate()
+    {
+        if (this.isPaused == false)
+        {
+            this.Move(Time.deltaTime);
+            this.DetectPlayer(Time.deltaTime);
+            this.CheckAttack();
+            Debug.DrawRay(this.lookingRay.origin, this.lookingRay.direction * this.detectionRange, Color.red);
+        }
+    }
+
+    public IEnumerator CoroutineUpdate()
+    {
+        while (true)
+        {
+            if (this.isPaused == false)
+            {
+                if (this.inAttackRange)
+                    this.StartCoroutine("Attack");
+                else if (this.inDefense)
+                    this.StartCoroutine("Defend");
+                else if (!this.isPlayerDetected)
+                    // updateTime *= 2;
+                    this.StartCoroutine("CausalBehaviour");
+                else
+                    this.UpdateTarget();
+            }
+
+            Debug.Log("CoroutineUpdate");
+            yield return new WaitForSeconds(this.updateRate);
+        }
+    }
+
     public virtual void DetectPlayer(float timeChange)
     {
-        int hitsNum = Physics.RaycastNonAlloc(lookingRay, this._lookingRaycastHits, detectionRange);
-        
-        if (hitsNum > 0  && this._lookingRaycastHits[0].collider.gameObject.tag == "Player")
+        int hitsNum = Physics.RaycastNonAlloc(this.lookingRay, this._lookingRaycastHits, this.detectionRange);
+
+        if (hitsNum > 0 && this._lookingRaycastHits[0].collider.gameObject.tag == "Player")
         {
             this.isPlayerDetected = true;
             this.attentionTimer = this.attentionTimeout;
-            this.inAttackRange = Vector3.Distance(transform.position, target) < attackRange;
+            this.inAttackRange = Vector3.Distance(this.transform.position, this.target) < this.attackRange;
         }
         else
         {
-            if(this.attentionTimer > 0) this.attentionTimer -= timeChange;
-            this.isPlayerDetected = (this.attentionTimer <= 0f) == false;
+            if (this.attentionTimer > 0) this.attentionTimer -= timeChange;
+            this.isPlayerDetected = this.attentionTimer <= 0f == false;
         }
-     
-        
-        
-    }   
+    }
+
     public virtual IEnumerator CausalBehaviour()
     {
-        this.lastPosition = transform.position;
+        this.lastPosition = this.transform.position;
         // var passLocation = transform.position;
-        var randomPointIndex = Random.Range(0, patrolPoints.Count);
-        var randomPoint = new Vector3(patrolPoints[randomPointIndex].x, transform.position.y, patrolPoints[randomPointIndex].z);
+        int randomPointIndex = Random.Range(0, this.patrolPoints.Count);
+        var randomPoint = new Vector3(this.patrolPoints[randomPointIndex].x, this.transform.position.y, this.patrolPoints[randomPointIndex].z);
         this.target = randomPoint;
         yield return new WaitForSeconds(1.2f);
     }
+
     public virtual void UpdateTarget()
     {
-        target = GameObject.FindGameObjectWithTag("Player").transform.position;
-        target.y = transform.position.y; // Keep the enemy at the same height as the player
+        this.target = GameObject.FindGameObjectWithTag("Player").transform.position;
+        this.target.y = this.transform.position.y; // Keep the enemy at the same height as the player
     }
 
     public virtual IEnumerator Attack()
     {
         // Attack the player
         // ...
-        yield return new WaitForSeconds(updateRate);
+        yield return new WaitForSeconds(this.updateRate);
     }
 
     public virtual IEnumerator Defend()
     {
         // Defend against the player's attack
         // ...
-        inDefense = true;
-        yield return new WaitForSeconds(defenseCD);
-        inDefense = false;
-        yield return new WaitForSeconds(updateRate);
+        this.inDefense = true;
+        yield return new WaitForSeconds(this.defenseCD);
+        this.inDefense = false;
+        yield return new WaitForSeconds(this.updateRate);
     }
 
     public virtual IEnumerator TakeDamage()
     {
-        if (!inDefense && defenseCD < 0)
-        {
-            health -= 1;
-            // Play damage animation
-        }
-
+        if (!this.inDefense && this.defenseCD < 0) this.health -= 1;
+        // Play damage animation
         // Take damage from the player
-        if (health <= 0)
-        {
-            yield return Die();
-        }
+        if (this.health <= 0) yield return this.Die();
         // play animation
-        yield return new WaitForSeconds(updateRate);
+        yield return new WaitForSeconds(this.updateRate);
     }
 
     public virtual IEnumerator Die()
     {
-        yield return new WaitForSeconds(updateRate);
-        Destroy(gameObject);
+        yield return new WaitForSeconds(this.updateRate);
+        Destroy(this.gameObject);
     }
 
     public virtual void Move(float time)
     {
         // Move towards the player
-        if (!isPaused && !inAttackRange && !inDefense)
+        if (!this.isPaused && !this.inAttackRange && !this.inDefense)
         {
-            var speedSet = moveSpeed;
+            float speedSet = this.moveSpeed;
             if (!this.isPlayerDetected) speedSet *= 0.5f;
-            
-            transform.position = Vector3.MoveTowards(transform.position, target, speedSet * time);
-            CheckRotate();
-            lookingRay.origin = transform.position;
 
-            if (transform.position != this.target)
-            {
-                lookingRay.direction = GetDirection(transform.position, this.target ) * this.detectionRange;
-                
-            }
+            this.transform.position = Vector3.MoveTowards(this.transform.position, this.target, speedSet * time);
+            this.CheckRotate();
+            this.lookingRay.origin = this.transform.position;
+
+            if (this.transform.position != this.target)
+                this.lookingRay.direction = this.GetDirection(this.transform.position, this.target) * this.detectionRange;
             else
-            {
-                lookingRay.direction = GetDirection(transform.position,  this.lastPosition) *  - this.detectionRange;
-            }
-            
+                this.lookingRay.direction = this.GetDirection(this.transform.position, this.lastPosition) * -this.detectionRange;
         }
-        else if (!this.isPaused)    
+        else if (!this.isPaused)
         {
-            transform.position += Vector3.zero;
+            this.transform.position += Vector3.zero;
         }
     }
 
@@ -237,28 +211,20 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     {
         // Rotate the enemy towards the player
         // ...
-        if (faceDirection > 0)
-        {
-            plane.GetComponent<Renderer>().material.SetInt("_is_flip", 1);
-        }
+        if (this.faceDirection > 0)
+            this.plane.GetComponent<Renderer>().material.SetInt("_is_flip", 1);
         else
-        {
-            plane.GetComponent<Renderer>().material.SetInt("_is_flip", 0);
-        }
+            this.plane.GetComponent<Renderer>().material.SetInt("_is_flip", 0);
     }
 
     public virtual void CheckAttack()
     {
         // Check if the enemy is in range to attack the player
         // ...
-        if (inAttackRange)
-        {
-            plane.GetComponent<Renderer>().material.SetInt("_is_attack", 1);
-        }
+        if (this.inAttackRange)
+            this.plane.GetComponent<Renderer>().material.SetInt("_is_attack", 1);
         else
-        {
-            plane.GetComponent<Renderer>().material.SetInt("_is_attack", 0);
-        }
+            this.plane.GetComponent<Renderer>().material.SetInt("_is_attack", 0);
     }
 
     public virtual void AddStatusEffect()
@@ -279,13 +245,12 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         // ...
     }
 
-    public virtual void BahaviourPattern() { }
-    
+    public virtual void BahaviourPattern()
+    {
+    }
+
     public Vector3 GetDirection(Vector3 currentPosition, Vector3 targetPosition)
     {
-        
         return (targetPosition - currentPosition).normalized;
-        
     }
-  
 }
