@@ -9,11 +9,12 @@ TagManager:
   - HitboxJudgement
   - Effect
   - Monster
+  - PlayerLight
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player_Ignore
   - Water
   - UI
   - 

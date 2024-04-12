@@ -1,12 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Survor.   ActionMaps;
 using Spine.Unity;
+// using Survor.ActionMaps;
+// using Survor.ECS.Bullet;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Playables;
-using Survor.ECS.Bullet;
+using PrimeTween;
+
+using Math = Unity.Physics.Math;
 
 // namespace PlayerInputSet
 // {
@@ -24,7 +27,10 @@ public enum PlayerState
 
 public enum PlayerDirection
 {
-    Up, Down , Left, Right,
+    Up,
+    Down,
+    Left,
+    Right,
     UpLeft,
     UpRight,
     DownLeft,
@@ -46,10 +52,12 @@ public class PlayerMoveInputController : MonoBehaviour
 
     // private Collider GrandCollider;
     private Vector2 ScreenSize;
-    private int jumpCount , maxJumpCount = 2;
+    private int jumpCount,
+        maxJumpCount = 2;
 
     [SerializeField]
-    private float dashGasCount = 3f, maxDashGasCount = 3f;
+    private float dashGasCount = 3f,
+        maxDashGasCount = 3f;
 
     [SerializeField]
     private bool isDodging,
@@ -64,19 +72,33 @@ public class PlayerMoveInputController : MonoBehaviour
 
     private AnimationController animationController;
 
-    private BulletGeneratorMono bulletGeneratorMono;
+    // private BulletGeneratorMono bulletGeneratorMono;
+
     // Start is called before the first frame update
+
+    private Camera mainCamera;
+    private Transform _lightTransform;
+    
+    private readonly RaycastHit[] _spotLightRaycastHits = new RaycastHit[15];
+    private Ray spotLightRay;
+    public float spotLightRange = 7f;
+    public int lightMode = 0; // 0: normal, 1: spot light
+
     void Start()
     {
         rb = this.transform.GetComponent<Rigidbody>();
         animationController = this.transform.GetComponent<AnimationController>();
-        bulletGeneratorMono = this.transform.GetComponent<BulletGeneratorMono>();
+        // bulletGeneratorMono = this.transform.GetComponent<BulletGeneratorMono>();
+        this._lightTransform = this.transform.Find("LampLight");
         // GrandCollider = this.transform.GetComponent<Collider>();
         this.ScreenSize = new Vector2(Screen.width, Screen.height);
         // Debug.Log("Screen Size : x" + this.ScreenSize);
         playerState = PlayerState.Idle;
+
+        this.mainCamera = Camera.main;
         // onAnimatorInit();
         // onInputMapInit();
+        this.spotLightRay = new Ray(this.transform.position, this.transform.forward);
     }
 
     IEnumerable Attack()
@@ -130,16 +152,18 @@ public class PlayerMoveInputController : MonoBehaviour
             {
                 // Move
                 this.transform.position +=
-                    new Vector3(RawMovementInput.x, 0, RawMovementInput.z)
-                    * Time.deltaTime
-                    * (2f);
+                    new Vector3(RawMovementInput.x, 0, RawMovementInput.z) * Time.deltaTime * (2f);
                 // Debug.Log("Move Event: x:"+ RawMovementInput.x + "  y:" +RawMovementInput.z);
             }
+            this.spotLightRay.origin = this.transform.position;
         }
         if (!isDashing && dashGasCount < maxDashGasCount)
         {
             dashGasCount += Time.deltaTime;
         }
+
+        DetectHitted();
+        Debug.DrawRay(this.spotLightRay.origin, this.spotLightRay.direction * this.spotLightRange, Color.blue);
 
     }
 
@@ -152,13 +176,11 @@ public class PlayerMoveInputController : MonoBehaviour
         // Jumping
         if (context.performed)
         {
-            if (RawMovementInput.y > 0 && jumpCount < maxJumpCount)
-            {
-                
-                rb.AddForce(Vector3.up * 5, ForceMode.VelocityChange);
-                jumpCount++;
-                
-            }
+            // if (RawMovementInput.y > 0 && jumpCount < maxJumpCount)
+            // {
+            //     rb.AddForce(Vector3.up * 5, ForceMode.VelocityChange);
+            //     jumpCount++;
+            // }
             if (RawMovementInput.x == 0 && RawMovementInput.z == 0)
             {
                 this.playerState = PlayerState.Idle;
@@ -192,11 +214,32 @@ public class PlayerMoveInputController : MonoBehaviour
         // }
     }
 
+    public virtual void DetectHitted()
+    {
+        int hitsNum = Physics.RaycastNonAlloc(this.spotLightRay, this._spotLightRaycastHits, this.spotLightRange);
+        Debug.Log(hitsNum);
+    }
     public void onLookEvent(InputAction.CallbackContext context)
     {
         // RawFacingDirection = context.ReadValue<Vector2>();
-        // var ctx = context.ReadValue<Vector2>();
-        // Debug.Log("Look Event: x:" + ctx.x + " y:" + ctx.y);
+        var inputDevice = context.control.device;
+        var ctx = context.ReadValue<Vector2>();
+        float angle = 0;
+        if (inputDevice == InputSystem.GetDevice<Mouse>())
+        {
+            Vector3 screenPos = this.mainCamera.WorldToScreenPoint(transform.position);
+             angle = Mathf.Atan2(ctx.y - screenPos.y, ctx.x - screenPos.x);
+        }
+        else
+        {
+            // Gamepad
+            angle = Mathf.Atan2(ctx.y, ctx.x);
+        }
+
+        // Tween.LocalPosition(this._lightTransform, new Vector3(ctx.x, this._lightTransform.localPosition.y, ctx.y), 0.5f);
+        Tween.LocalRotation(this._lightTransform, new Vector3(0, angle * -Mathf.Rad2Deg, 0) , 0.5f);
+        this.spotLightRay.direction = Quaternion.Euler(0,angle * -Mathf.Rad2Deg + 90 ,0) * transform.forward * this.spotLightRange;
+        
     }
 
     /// <summary>
@@ -246,8 +289,8 @@ public class PlayerMoveInputController : MonoBehaviour
         {
             this.UpdateAnimation();
             // StartCoroutine(Attack());
-            bulletGeneratorMono.Shoot() ;
-        }
+            // bulletGeneratorMono.Shoot();
+        }   
     }
 
     public void onSkillAttack2Event(InputAction.CallbackContext context)
@@ -317,14 +360,13 @@ public class PlayerMoveInputController : MonoBehaviour
     /// <summary>
     ///  AnimationController Wrapper
     /// </summary>
-    /// 
+    ///
 
 
     void UpdateAnimation() =>
         animationController.UpdateAnimation(isAttack, GetDirectionState(), playerState);
 
     void AnimationSpeedChange(float speed) => animationController.SpeedChange(speed);
-
 
     public PlayerDirection GetDirectionState()
     {

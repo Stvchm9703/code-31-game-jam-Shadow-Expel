@@ -64,33 +64,6 @@ public partial class @PlayerActionKeybind: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""SkillAttack1"",
-                    ""type"": ""Button"",
-                    ""id"": ""591f66b4-3963-426b-9145-3c1499d45c87"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""SkillAttack2"",
-                    ""type"": ""Button"",
-                    ""id"": ""aec14269-85da-4cf4-98b8-c3f9e35be2bd"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""SkillAttack3"",
-                    ""type"": ""Button"",
-                    ""id"": ""1d267002-725f-43e8-88df-213ec013c454"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Dash"",
                     ""type"": ""Button"",
                     ""id"": ""b28cd877-071b-48de-8355-cbf84f324237"",
@@ -109,15 +82,6 @@ public partial class @PlayerActionKeybind: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Block"",
-                    ""type"": ""Button"",
-                    ""id"": ""82b753fe-98ce-4b31-92f4-8cbf20e7de50"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Item"",
                     ""type"": ""Value"",
                     ""id"": ""8c9df8ce-aa51-4e86-8cff-5f0afa3412f1"",
@@ -125,6 +89,15 @@ public partial class @PlayerActionKeybind: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Attack2"",
+                    ""type"": ""Button"",
+                    ""id"": ""f6b12533-3cca-4287-9ad7-b6b1be098a54"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -373,7 +346,7 @@ public partial class @PlayerActionKeybind: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""aa8c969e-4f4c-4a9c-80b7-b1ce4104575f"",
-                    ""path"": ""<Keyboard>/h"",
+                    ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -394,116 +367,6 @@ public partial class @PlayerActionKeybind: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""30b5f43e-419d-49bf-93ca-9e32a19e9fcc"",
-                    ""path"": ""<Keyboard>/j"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""SkillAttack1"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""add70e6a-978b-414c-a2c6-89536e33634c"",
-                    ""path"": ""<Gamepad>/buttonNorth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""SkillAttack1"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""ff225cd6-06d5-4b8c-b709-7722a1bd34c2"",
-                    ""path"": ""<Keyboard>/k"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""SkillAttack2"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""Gamepad"",
-                    ""id"": ""cefbe0d3-816d-458f-9299-931820fe9bf9"",
-                    ""path"": ""ButtonWithOneModifier"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""SkillAttack2"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""Modifier"",
-                    ""id"": ""77ba5f5f-d8d4-43f6-946f-9a8aac2e5eb4"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""SkillAttack2"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""Button"",
-                    ""id"": ""28b63b7e-f525-4b77-9866-496450d1170c"",
-                    ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""SkillAttack2"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""496cddcc-5087-4175-acac-8aadf1a24e74"",
-                    ""path"": ""<Keyboard>/l"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""SkillAttack3"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""Gamepad"",
-                    ""id"": ""e61e9de2-3cae-4dc2-b35a-05c0a2009e08"",
-                    ""path"": ""ButtonWithOneModifier"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""SkillAttack3"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""Modifier"",
-                    ""id"": ""b6dd1611-8b82-4f69-8517-af6f0193725e"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""SkillAttack3"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""Button"",
-                    ""id"": ""e93bcac3-312c-4192-851d-1b7e06f0238e"",
-                    ""path"": ""<Gamepad>/buttonNorth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""SkillAttack3"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": """",
                     ""id"": ""1b37bd1c-48da-4a23-93d4-87299b1ad1e5"",
                     ""path"": ""<Keyboard>/leftShift"",
                     ""interactions"": """",
@@ -516,7 +379,7 @@ public partial class @PlayerActionKeybind: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""f55f0a0b-d5fe-4839-bfcc-e5b1da273734"",
-                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -536,81 +399,15 @@ public partial class @PlayerActionKeybind: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""Gamepad"",
-                    ""id"": ""f9aa0aa0-a064-4271-8405-7bd41896036e"",
-                    ""path"": ""ButtonWithOneModifier"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Switch"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""Modifier"",
-                    ""id"": ""69298290-c35f-4b8d-b9fd-f4b6c2e926af"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Switch"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""Button"",
-                    ""id"": ""8bdcae80-c333-4b3c-8f27-83870467bdd6"",
-                    ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Switch"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
                     ""name"": """",
-                    ""id"": ""11693533-bc3d-4f13-9348-8fdfabbf2737"",
-                    ""path"": ""<Keyboard>/b"",
+                    ""id"": ""adbabe3f-14d2-4c4a-ba1f-327b3b25cc85"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Block"",
+                    ""action"": ""Switch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""Gamepad"",
-                    ""id"": ""d6e5de42-8133-4e5e-9a03-b9dfb967894a"",
-                    ""path"": ""OneModifier"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Block"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""modifier"",
-                    ""id"": ""81d1a129-761e-4e8f-836e-5088d57547c7"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Block"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""binding"",
-                    ""id"": ""a4d674fe-c473-40b9-973f-7a5a6b8bf92d"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Block"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": """",
@@ -633,6 +430,28 @@ public partial class @PlayerActionKeybind: IInputActionCollection2, IDisposable
                     ""action"": ""Item"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""04f51bf3-2f2a-4843-aa4e-7e9fa52cb04d"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9d68036d-6033-4368-a86a-bee153c7a66c"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -645,13 +464,10 @@ public partial class @PlayerActionKeybind: IInputActionCollection2, IDisposable
         m_main_action_Look = m_main_action.FindAction("Look", throwIfNotFound: true);
         m_main_action_Menu = m_main_action.FindAction("Menu", throwIfNotFound: true);
         m_main_action_AttackInteract = m_main_action.FindAction("Attack/Interact", throwIfNotFound: true);
-        m_main_action_SkillAttack1 = m_main_action.FindAction("SkillAttack1", throwIfNotFound: true);
-        m_main_action_SkillAttack2 = m_main_action.FindAction("SkillAttack2", throwIfNotFound: true);
-        m_main_action_SkillAttack3 = m_main_action.FindAction("SkillAttack3", throwIfNotFound: true);
         m_main_action_Dash = m_main_action.FindAction("Dash", throwIfNotFound: true);
         m_main_action_Switch = m_main_action.FindAction("Switch", throwIfNotFound: true);
-        m_main_action_Block = m_main_action.FindAction("Block", throwIfNotFound: true);
         m_main_action_Item = m_main_action.FindAction("Item", throwIfNotFound: true);
+        m_main_action_Attack2 = m_main_action.FindAction("Attack2", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -717,13 +533,10 @@ public partial class @PlayerActionKeybind: IInputActionCollection2, IDisposable
     private readonly InputAction m_main_action_Look;
     private readonly InputAction m_main_action_Menu;
     private readonly InputAction m_main_action_AttackInteract;
-    private readonly InputAction m_main_action_SkillAttack1;
-    private readonly InputAction m_main_action_SkillAttack2;
-    private readonly InputAction m_main_action_SkillAttack3;
     private readonly InputAction m_main_action_Dash;
     private readonly InputAction m_main_action_Switch;
-    private readonly InputAction m_main_action_Block;
     private readonly InputAction m_main_action_Item;
+    private readonly InputAction m_main_action_Attack2;
     public struct Main_actionActions
     {
         private @PlayerActionKeybind m_Wrapper;
@@ -732,13 +545,10 @@ public partial class @PlayerActionKeybind: IInputActionCollection2, IDisposable
         public InputAction @Look => m_Wrapper.m_main_action_Look;
         public InputAction @Menu => m_Wrapper.m_main_action_Menu;
         public InputAction @AttackInteract => m_Wrapper.m_main_action_AttackInteract;
-        public InputAction @SkillAttack1 => m_Wrapper.m_main_action_SkillAttack1;
-        public InputAction @SkillAttack2 => m_Wrapper.m_main_action_SkillAttack2;
-        public InputAction @SkillAttack3 => m_Wrapper.m_main_action_SkillAttack3;
         public InputAction @Dash => m_Wrapper.m_main_action_Dash;
         public InputAction @Switch => m_Wrapper.m_main_action_Switch;
-        public InputAction @Block => m_Wrapper.m_main_action_Block;
         public InputAction @Item => m_Wrapper.m_main_action_Item;
+        public InputAction @Attack2 => m_Wrapper.m_main_action_Attack2;
         public InputActionMap Get() { return m_Wrapper.m_main_action; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -760,27 +570,18 @@ public partial class @PlayerActionKeybind: IInputActionCollection2, IDisposable
             @AttackInteract.started += instance.OnAttackInteract;
             @AttackInteract.performed += instance.OnAttackInteract;
             @AttackInteract.canceled += instance.OnAttackInteract;
-            @SkillAttack1.started += instance.OnSkillAttack1;
-            @SkillAttack1.performed += instance.OnSkillAttack1;
-            @SkillAttack1.canceled += instance.OnSkillAttack1;
-            @SkillAttack2.started += instance.OnSkillAttack2;
-            @SkillAttack2.performed += instance.OnSkillAttack2;
-            @SkillAttack2.canceled += instance.OnSkillAttack2;
-            @SkillAttack3.started += instance.OnSkillAttack3;
-            @SkillAttack3.performed += instance.OnSkillAttack3;
-            @SkillAttack3.canceled += instance.OnSkillAttack3;
             @Dash.started += instance.OnDash;
             @Dash.performed += instance.OnDash;
             @Dash.canceled += instance.OnDash;
             @Switch.started += instance.OnSwitch;
             @Switch.performed += instance.OnSwitch;
             @Switch.canceled += instance.OnSwitch;
-            @Block.started += instance.OnBlock;
-            @Block.performed += instance.OnBlock;
-            @Block.canceled += instance.OnBlock;
             @Item.started += instance.OnItem;
             @Item.performed += instance.OnItem;
             @Item.canceled += instance.OnItem;
+            @Attack2.started += instance.OnAttack2;
+            @Attack2.performed += instance.OnAttack2;
+            @Attack2.canceled += instance.OnAttack2;
         }
 
         private void UnregisterCallbacks(IMain_actionActions instance)
@@ -797,27 +598,18 @@ public partial class @PlayerActionKeybind: IInputActionCollection2, IDisposable
             @AttackInteract.started -= instance.OnAttackInteract;
             @AttackInteract.performed -= instance.OnAttackInteract;
             @AttackInteract.canceled -= instance.OnAttackInteract;
-            @SkillAttack1.started -= instance.OnSkillAttack1;
-            @SkillAttack1.performed -= instance.OnSkillAttack1;
-            @SkillAttack1.canceled -= instance.OnSkillAttack1;
-            @SkillAttack2.started -= instance.OnSkillAttack2;
-            @SkillAttack2.performed -= instance.OnSkillAttack2;
-            @SkillAttack2.canceled -= instance.OnSkillAttack2;
-            @SkillAttack3.started -= instance.OnSkillAttack3;
-            @SkillAttack3.performed -= instance.OnSkillAttack3;
-            @SkillAttack3.canceled -= instance.OnSkillAttack3;
             @Dash.started -= instance.OnDash;
             @Dash.performed -= instance.OnDash;
             @Dash.canceled -= instance.OnDash;
             @Switch.started -= instance.OnSwitch;
             @Switch.performed -= instance.OnSwitch;
             @Switch.canceled -= instance.OnSwitch;
-            @Block.started -= instance.OnBlock;
-            @Block.performed -= instance.OnBlock;
-            @Block.canceled -= instance.OnBlock;
             @Item.started -= instance.OnItem;
             @Item.performed -= instance.OnItem;
             @Item.canceled -= instance.OnItem;
+            @Attack2.started -= instance.OnAttack2;
+            @Attack2.performed -= instance.OnAttack2;
+            @Attack2.canceled -= instance.OnAttack2;
         }
 
         public void RemoveCallbacks(IMain_actionActions instance)
@@ -841,12 +633,9 @@ public partial class @PlayerActionKeybind: IInputActionCollection2, IDisposable
         void OnLook(InputAction.CallbackContext context);
         void OnMenu(InputAction.CallbackContext context);
         void OnAttackInteract(InputAction.CallbackContext context);
-        void OnSkillAttack1(InputAction.CallbackContext context);
-        void OnSkillAttack2(InputAction.CallbackContext context);
-        void OnSkillAttack3(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
         void OnSwitch(InputAction.CallbackContext context);
-        void OnBlock(InputAction.CallbackContext context);
         void OnItem(InputAction.CallbackContext context);
+        void OnAttack2(InputAction.CallbackContext context);
     }
 }
