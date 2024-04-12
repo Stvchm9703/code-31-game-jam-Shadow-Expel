@@ -82,7 +82,7 @@ public class PlayerMoveInputController : MonoBehaviour
     private readonly RaycastHit[] _spotLightRaycastHits = new RaycastHit[15];
     private Ray spotLightRay;
     public float spotLightRange = 7f;
-    public int lightMode = 0; // 0: normal, 1: spot light
+    
 
     void Start()
     {
@@ -216,8 +216,8 @@ public class PlayerMoveInputController : MonoBehaviour
 
     public virtual void DetectHitted()
     {
-        int hitsNum = Physics.RaycastNonAlloc(this.spotLightRay, this._spotLightRaycastHits, this.spotLightRange);
-        Debug.Log(hitsNum);
+        // int hitsNum = Physics.RaycastNonAlloc(this.spotLightRay, this._spotLightRaycastHits, this.spotLightRange);
+        // Debug.Log(hitsNum);
     }
     public void onLookEvent(InputAction.CallbackContext context)
     {
@@ -257,11 +257,13 @@ public class PlayerMoveInputController : MonoBehaviour
         {
             isAttack = true;
             playerState = PlayerState.Attack;
+            this._lightTransform.GetComponent<LightModeSwitch>().lightMode = 1;
         }
         else
         {
             isAttack = false;
             playerState = isMoving ? PlayerState.Move : PlayerState.Idle;
+            this._lightTransform.GetComponent<LightModeSwitch>().lightMode = 0;
         }
         // StartCoroutine(Attack());
         if (context.performed)

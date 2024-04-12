@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3194327713471803848}
   - component: {fileID: 3859140040762163848}
   - component: {fileID: 3206566967063500163}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62,6 +62,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: -876546973899608171, guid: 3c6fb1643b7594da49498c49f16a8255, type: 3}
+  - {fileID: -876546973899608171, guid: 3c6fb1643b7594da49498c49f16a8255, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -94,7 +95,7 @@ GameObject:
   - component: {fileID: 7862815350613395799}
   - component: {fileID: 2495007415261150339}
   - component: {fileID: 8448159555793067482}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: AttackPlane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -180,7 +181,7 @@ GameObject:
   - component: {fileID: 8273063918292087109}
   - component: {fileID: 6261865408343592964}
   - component: {fileID: 7471562346707688231}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mon001_lv1
   m_TagString: Monster
   m_Icon: {fileID: 0}
@@ -312,20 +313,23 @@ MonoBehaviour:
   attackDamage: 1
   inAttack: 0
   inAttackRange: 0
-  attackRange: 1.35
+  attackRange: 1.5
   attackCD: 1.5
   inDefense: 0
   defenseCD: 0
   isPaused: 0
   target: {x: 0, y: 0, z: 0}
-  moveSpeed: 8.5
-  updateRate: 2
+  moveSpeed: 5
+  updateRate: 3.5
   plane: {fileID: 0}
   monsterSkin: {fileID: 2800000, guid: 30fd63930318f49648e90633a82a9782, type: 3}
   isPlayerDetected: 0
-  detectionRange: 2
+  detectionRange: 3
   attentionTimeout: 5
   attentionTimer: 0
   patrolPoints: []
+  detectionLayer:
+    serializedVersion: 2
+    m_Bits: 768
   attackPlane: {fileID: 4723159045283505926}
   attackSkin: {fileID: 2800000, guid: 11d3209b8263546d5aa2592c5906c3b9, type: 3}

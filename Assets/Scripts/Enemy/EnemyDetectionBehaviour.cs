@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
-using Ray = UnityEngine.Ray;
 using RaycastHit = UnityEngine.RaycastHit;
 
 public abstract class IEnemyDetectBehaviour : MonoBehaviour
@@ -45,14 +44,10 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     // public Vector3 lookingDirection => this.lookingRay.direction;
 
     public List<Vector3> patrolPoints;
-
-    // ---
-
+    
+    public LayerMask detectionLayer;
     private readonly RaycastHit[] _lookingRaycastHits = new RaycastHit[5];
-
-    private Vector3 lastPosition;
-    private Ray lookingRay;
-
+    
 
     public float faceDirection => this.target.x - this.transform.position.x;
 
@@ -73,6 +68,19 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         }
     }
 
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(this.transform.position, this.target);
+        Gizmos.DrawWireSphere(this.transform.position, this.detectionRange);
+        if (this.inAttackRange)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(this.transform.position, this.attackRange);
+        }
+    }
+
     public void onStart()
     {
         // Find and store a reference to the player's transform
@@ -81,7 +89,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         if (this.monsterSkin != null) this.plane.GetComponent<Renderer>().material.SetTexture("_character_texture", this.monsterSkin);
 
         this.target = this.transform.position;
-        this.lookingRay = new Ray(this.transform.position, this.transform.forward);
+        // this.lookingRay = new Ray(this.transform.position, this.transform.forward);
         this.StartCoroutine("CoroutineUpdate");
     }
 
@@ -92,7 +100,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
             this.Move(Time.deltaTime);
             this.DetectPlayer(Time.deltaTime);
             this.CheckAttack();
-            Debug.DrawRay(this.lookingRay.origin, this.lookingRay.direction * this.detectionRange, Color.red);
+            // Debug.DrawRay(this.lookingRay.origin, this.lookingRay.direction * this.detectionRange, Color.red);
         }
     }
 
@@ -120,29 +128,48 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public virtual void DetectPlayer(float timeChange)
     {
-        int hitsNum = Physics.RaycastNonAlloc(this.lookingRay, this._lookingRaycastHits, this.detectionRange);
+        int hitsNum = Physics.SphereCastNonAlloc(
+            this.transform.position,
+            this.detectionRange,
+            this.GetDirection(this.transform.position, this.target),
+            this._lookingRaycastHits,
+            this.detectionRange,
+            this.detectionLayer
+        );
+        if (hitsNum > 0)
+            foreach (RaycastHit hitted in this._lookingRaycastHits)
+                if (hitted.collider.gameObject && hitted.collider.gameObject.tag == "Player")
+                {
+                    this.isPlayerDetected = true;
+                    this.attentionTimer = this.attentionTimeout;
+                    this.CheckInAttackRage();
+                }
+                else
+                {
+                    if (this.attentionTimer > 0) this.attentionTimer -= timeChange;
+                    this.isPlayerDetected = this.attentionTimer <= 0f == false;
+                }
+    }
 
-        if (hitsNum > 0 && this._lookingRaycastHits[0].collider.gameObject.tag == "Player")
-        {
-            this.isPlayerDetected = true;
-            this.attentionTimer = this.attentionTimeout;
-            this.inAttackRange = Vector3.Distance(this.transform.position, this.target) < this.attackRange;
-        }
-        else
-        {
-            if (this.attentionTimer > 0) this.attentionTimer -= timeChange;
-            this.isPlayerDetected = this.attentionTimer <= 0f == false;
-        }
+    public virtual void CheckInAttackRage()
+    {
+        // this.inAttackRange = Vector3.Distance(this.transform.position, this.target) < this.attackRange;
+        this.inAttackRange = Physics.SphereCast(
+            this.transform.position,
+            this.attackRange,
+            this.GetDirection(this.transform.position, this.target),
+            out _,
+            this.attackRange,
+            LayerMask.NameToLayer("character")
+        );
     }
 
     public virtual IEnumerator CausalBehaviour()
     {
-        this.lastPosition = this.transform.position;
-        // var passLocation = transform.position;
         int randomPointIndex = Random.Range(0, this.patrolPoints.Count);
         var randomPoint = new Vector3(this.patrolPoints[randomPointIndex].x, this.transform.position.y, this.patrolPoints[randomPointIndex].z);
         this.target = randomPoint;
-        yield return new WaitForSeconds(1.2f);
+        yield return new WaitForSeconds(this.updateRate * 0.3f);
     }
 
     public virtual void UpdateTarget()
@@ -194,12 +221,6 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
             this.transform.position = Vector3.MoveTowards(this.transform.position, this.target, speedSet * time);
             this.CheckRotate();
-            this.lookingRay.origin = this.transform.position;
-
-            if (this.transform.position != this.target)
-                this.lookingRay.direction = this.GetDirection(this.transform.position, this.target) * this.detectionRange;
-            else
-                this.lookingRay.direction = this.GetDirection(this.transform.position, this.lastPosition) * -this.detectionRange;
         }
         else if (!this.isPaused)
         {

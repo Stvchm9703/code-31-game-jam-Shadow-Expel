@@ -17,12 +17,12 @@ TagManager:
   - Player_Ignore
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - items
+  - monster
+  - character
+  - wall
+  - ground
+  - player_light
   - 
   - 
   - 
