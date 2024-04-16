@@ -184,8 +184,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         );
         this.target = randomPoint;
         yield return new WaitForSeconds(this.updateRate * 0.3f);
-    }
-
+    }   
     public virtual void UpdateTarget()
     {
         this.target = GameObject.FindGameObjectWithTag("Player").transform.position;
