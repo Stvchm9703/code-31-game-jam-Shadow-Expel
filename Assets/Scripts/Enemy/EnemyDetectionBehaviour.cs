@@ -167,8 +167,6 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     {
         // this.inAttackRange = Vector3.Distance(this.transform.position, this.target) < this.attackRange;
         this.inAttackRange = Vector3.Distance(transform.position, target) < attackRange;
-        Debug.Log("CheckInAttackRage");
-        Debug.Log("inAttackRange: " + this.inAttackRange);
         if (this.inAttackRange)
         {
             this.StopCoroutine(this._currentCoroutine);
@@ -198,7 +196,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public virtual IEnumerator Attack()
     {
-        Debug.Log("Attack Phase");
+        // Debug.Log("Attack Phase");
         // Attack the player
         // ...
         yield return new WaitForSeconds(this.updateRate + this.attackCD);
@@ -234,13 +232,13 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         // Play damage animation
         // Take damage from the player
         if (this.health <= 0)
-            this.Die();
+            StartCoroutine( "Die");
 
     }
 
     public virtual IEnumerator TakeDamageAnimation()
     { 
-        Debug.Log("get damage animation");
+        // Debug.Log("get damage animation");
         yield return new WaitForSeconds(this.updateRate + this._demageProcessTime);
         ResetAfterDemage();
     }
@@ -252,9 +250,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public virtual void Die()
     {
-        // yield return new WaitForSeconds(this.updateRate);
         StartCoroutine("DieAnimation");
-        
         Destroy(this.gameObject);
     }
     
@@ -323,7 +319,6 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         // ...
     }
 
-    public virtual void BahaviourPattern() { }
 
     public static Vector3 GetDirection(Vector3 currentPosition, Vector3 targetPosition)
     {

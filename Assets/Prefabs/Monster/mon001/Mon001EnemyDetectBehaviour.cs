@@ -46,5 +46,8 @@ public class Mon001EnemyDetectBehaviour : IEnemyDetectBehaviour
         attackPlane.SetActive(false);
         this.ResetAfterAttack();
     }
+    
+    // !TODO: add the take damage animation  "TakeDamageAnimation"
 
+    // !TODO: add the Die animation "DieAnimation"
 }
