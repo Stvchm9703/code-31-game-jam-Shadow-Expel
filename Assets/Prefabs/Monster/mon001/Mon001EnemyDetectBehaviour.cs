@@ -7,16 +7,21 @@ public class Mon001EnemyDetectBehaviour : IEnemyDetectBehaviour
 {
     public GameObject attackPlane;
     public Texture attackSkin;
+    Renderer _attackPlaneRenderer;
+    private static readonly int AttackPlaneRenderCharacterTexture = Shader.PropertyToID("_character_texture");
+    private static readonly int AttackPlaneRenderIsFlip = Shader.PropertyToID("_is_flip");
 
     private void Start()
     {
         onStart();
         attackPlane = transform.Find("AttackPlane").gameObject;
-        attackPlane.GetComponent<Renderer>().material.SetTexture("_character_texture", attackSkin);
+        this._attackPlaneRenderer = attackPlane.GetComponent<Renderer>();
+        if (attackSkin != null) 
+            this._attackPlaneRenderer.material.SetTexture(AttackPlaneRenderCharacterTexture, attackSkin);
         attackPlane.SetActive(false);
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         onUpdate();
     }
@@ -26,28 +31,20 @@ public class Mon001EnemyDetectBehaviour : IEnemyDetectBehaviour
         inAttack = true;
         // Play the attack animation
         // ...
-
+        // fake preattack animation 
         yield return new WaitForSeconds(1.25f);
         plane.SetActive(false);
-        if (attackSkin != null)
-        {
-            if (faceDirection > 0)
-            {
-                attackPlane.GetComponent<Renderer>().material.SetInt("_is_flip", 1);
-            }
-            else
-            {
-                attackPlane.GetComponent<Renderer>().material.SetInt("_is_flip", 0);
-            }
+        if (attackPlane)
+        {   
+            this._attackPlaneRenderer.material.SetInt(AttackPlaneRenderIsFlip, faceDirection? 1 : 0);
             attackPlane.SetActive(true);
         }
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(this.attackCD);
         // Deal damage to the player
         // ...
         plane.SetActive(true);
         attackPlane.SetActive(false);
-        inAttack = false;
-        inAttackRange = false;
+        this.ResetAfterAttack();
     }
 
 }

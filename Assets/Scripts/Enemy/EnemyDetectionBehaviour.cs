@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Entities.UI;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 using RaycastHit = UnityEngine.RaycastHit;
 
@@ -17,9 +19,11 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     public float attackRange = 1.2f;
     public float attackCD = 1.5f;
 
+    [SerializeField] bool isDemageProcess;
+    float _demageProcessTime = 1.5f; // lock demage process time
     //
-    public bool inDefense;
-    public int defenseCD;
+    // public bool inDefense;
+    // public int defenseCD;
 
     //
     public bool isPaused;
@@ -41,58 +45,63 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     [SerializeField]
     private float attentionTimer;
+
     // public Vector3 lookingDirection => this.lookingRay.direction;
 
     public List<Vector3> patrolPoints;
-    
+
     public LayerMask detectionLayer;
     private readonly RaycastHit[] _lookingRaycastHits = new RaycastHit[5];
+
+    public bool faceDirection => (this.target.x - this.transform.position.x) > 0;
+
+    Coroutine _currentCoroutine;
     
-
-    public float faceDirection => this.target.x - this.transform.position.x;
-
     // body collider
     private void OnCollisionEnter(Collision collision)
     {
         // Check if the enemy collided with the player
-        if (collision.gameObject.tag == "Player" && this.inAttack)
+        if (collision.gameObject.CompareTag( "Player") && this.inAttack)
         {
             // Deal damage to the player
             // ...
         }
-        else if (collision.gameObject.tag == "AttackHitbox")
+        else if (collision.gameObject.CompareTag( "AttackHitbox") )
         {
             // Deal damage to the enemy
             // ...
-            this.TakeDamage();
+            // this.TakeDamage();
         }
     }
-
 
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawLine(this.transform.position, this.target);
         Gizmos.DrawWireSphere(this.transform.position, this.detectionRange);
-        if (this.inAttackRange)
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(this.transform.position, this.attackRange);
-        }
+        // if (this.inAttackRange)
+        // {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(this.transform.position, this.attackRange);
+        // }
     }
 
     public void onStart()
     {
         // Find and store a reference to the player's transform
         this.plane = this.transform.Find("Plane").gameObject;
+        this._planeRenderer = this.transform.Find("Plane").GetComponent<Renderer>();
         // StartCoroutine("UpdateTarget");
-        if (this.monsterSkin != null) this.plane.GetComponent<Renderer>().material.SetTexture("_character_texture", this.monsterSkin);
+        if (this.monsterSkin != null)
+            this.plane.GetComponent<Renderer>()
+                .material.SetTexture(PlaneRendererCharacterTexture, this.monsterSkin);
 
         this.target = this.transform.position;
         // this.lookingRay = new Ray(this.transform.position, this.transform.forward);
-        this.StartCoroutine("CoroutineUpdate");
+        this._currentCoroutine = this.StartCoroutine("CoroutineUpdate");
     }
 
+    // call this method in the Implement FixedUpdate
     public void onUpdate()
     {
         if (this.isPaused == false)
@@ -108,20 +117,14 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     {
         while (true)
         {
+            Debug.Log("CoroutineUpdate");
             if (this.isPaused == false)
             {
-                if (this.inAttackRange)
-                    this.StartCoroutine("Attack");
-                else if (this.inDefense)
-                    this.StartCoroutine("Defend");
-                else if (!this.isPlayerDetected)
-                    // updateTime *= 2;
+                if (!this.isPlayerDetected)
                     this.StartCoroutine("CausalBehaviour");
                 else
                     this.UpdateTarget();
             }
-
-            Debug.Log("CoroutineUpdate");
             yield return new WaitForSeconds(this.updateRate);
         }
     }
@@ -131,43 +134,56 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         int hitsNum = Physics.SphereCastNonAlloc(
             this.transform.position,
             this.detectionRange,
-            this.GetDirection(this.transform.position, this.target),
+            IEnemyDetectBehaviour.GetDirection(this.transform.position, this.target),
             this._lookingRaycastHits,
             this.detectionRange,
             this.detectionLayer
         );
         if (hitsNum > 0)
+        {
+            var playerGO = GameObject.FindGameObjectWithTag("Player");
+
             foreach (RaycastHit hitted in this._lookingRaycastHits)
-                if (hitted.collider.gameObject && hitted.collider.gameObject.tag == "Player")
+            {
+                if (!hitted.collider)  continue;
+                if (hitted.collider.gameObject && hitted.collider.gameObject == playerGO)
                 {
                     this.isPlayerDetected = true;
                     this.attentionTimer = this.attentionTimeout;
                     this.CheckInAttackRage();
                 }
-                else
-                {
-                    if (this.attentionTimer > 0) this.attentionTimer -= timeChange;
-                    this.isPlayerDetected = this.attentionTimer <= 0f == false;
-                }
+                        
+            }
+        }
+        else
+        {
+            if (this.attentionTimer > 0f)
+                this.attentionTimer -= timeChange;
+            this.isPlayerDetected = !(this.attentionTimer <= 0f);
+        }
     }
 
     public virtual void CheckInAttackRage()
     {
         // this.inAttackRange = Vector3.Distance(this.transform.position, this.target) < this.attackRange;
-        this.inAttackRange = Physics.SphereCast(
-            this.transform.position,
-            this.attackRange,
-            this.GetDirection(this.transform.position, this.target),
-            out _,
-            this.attackRange,
-            LayerMask.NameToLayer("character")
-        );
+        this.inAttackRange = Vector3.Distance(transform.position, target) < attackRange;
+        Debug.Log("CheckInAttackRage");
+        Debug.Log("inAttackRange: " + this.inAttackRange);
+        if (this.inAttackRange)
+        {
+            this.StopCoroutine(this._currentCoroutine);
+            this._currentCoroutine = this.StartCoroutine("Attack");
+        }
     }
 
     public virtual IEnumerator CausalBehaviour()
     {
         int randomPointIndex = Random.Range(0, this.patrolPoints.Count);
-        var randomPoint = new Vector3(this.patrolPoints[randomPointIndex].x, this.transform.position.y, this.patrolPoints[randomPointIndex].z);
+        var randomPoint = new Vector3(
+            this.patrolPoints[randomPointIndex].x,
+            this.transform.position.y,
+            this.patrolPoints[randomPointIndex].z
+        );
         this.target = randomPoint;
         yield return new WaitForSeconds(this.updateRate * 0.3f);
     }
@@ -177,49 +193,91 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         this.target = GameObject.FindGameObjectWithTag("Player").transform.position;
         this.target.y = this.transform.position.y; // Keep the enemy at the same height as the player
     }
+    
+    
 
     public virtual IEnumerator Attack()
     {
+        Debug.Log("Attack Phase");
         // Attack the player
         // ...
-        yield return new WaitForSeconds(this.updateRate);
+        yield return new WaitForSeconds(this.updateRate + this.attackCD);
+        this.ResetAfterAttack();
+    }
+    public void ResetAfterAttack()
+    {
+        this.inAttack = false;
+        this.inAttackRange = false;
+        this._currentCoroutine = this.StartCoroutine("CoroutineUpdate");
     }
 
-    public virtual IEnumerator Defend()
-    {
-        // Defend against the player's attack
-        // ...
-        this.inDefense = true;
-        yield return new WaitForSeconds(this.defenseCD);
-        this.inDefense = false;
-        yield return new WaitForSeconds(this.updateRate);
-    }
+    // public virtual IEnumerator Defend()
+    // {
+    //     // Defend against the player's attack
+    //     // ...
+    //     // this.inDefense = true;
+    //     // yield return new WaitForSeconds(this.defenseCD);
+    //     // this.inDefense = false;
+    //     yield return new WaitForSeconds(this.updateRate);
+    // }
 
-    public virtual IEnumerator TakeDamage()
+    public virtual void TakeDamage(int damage = 1)
     {
-        if (!this.inDefense && this.defenseCD < 0) this.health -= 1;
+        Debug.Log("get damage");
+        if (this.isDemageProcess) return;
+        
+        this.health -= damage;
+        this.isDemageProcess = true;
+        StopCoroutine(this._currentCoroutine);
+        this._currentCoroutine = StartCoroutine("TakeDamageAnimation");
+        // }
         // Play damage animation
         // Take damage from the player
-        if (this.health <= 0) yield return this.Die();
-        // play animation
-        yield return new WaitForSeconds(this.updateRate);
+        if (this.health <= 0)
+            this.Die();
+
     }
 
-    public virtual IEnumerator Die()
+    public virtual IEnumerator TakeDamageAnimation()
+    { 
+        Debug.Log("get damage animation");
+        yield return new WaitForSeconds(this.updateRate + this._demageProcessTime);
+        ResetAfterDemage();
+    }
+    public void ResetAfterDemage()
     {
-        yield return new WaitForSeconds(this.updateRate);
+        this.isDemageProcess = false;
+        this._currentCoroutine = this.StartCoroutine("CoroutineUpdate");
+    }
+
+    public virtual void Die()
+    {
+        // yield return new WaitForSeconds(this.updateRate);
+        StartCoroutine("DieAnimation");
+        
         Destroy(this.gameObject);
+    }
+    
+    public virtual IEnumerator DieAnimation()
+    {   
+        yield return null;
+        // this.isPaused = tru  e;
     }
 
     public virtual void Move(float time)
     {
         // Move towards the player
-        if (!this.isPaused && !this.inAttackRange && !this.inDefense)
+        if (!this.isPaused && !this.inAttackRange)
         {
             float speedSet = this.moveSpeed;
-            if (!this.isPlayerDetected) speedSet *= 0.5f;
+            if (!this.isPlayerDetected)
+                speedSet *= 0.5f;
 
-            this.transform.position = Vector3.MoveTowards(this.transform.position, this.target, speedSet * time);
+            this.transform.position = Vector3.MoveTowards(
+                this.transform.position,
+                this.target,
+                speedSet * time
+            );
             this.CheckRotate();
         }
         else if (!this.isPaused)
@@ -228,24 +286,23 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         }
     }
 
+    Renderer _planeRenderer;
+    private static readonly int PlaneRendererIsAttack = Shader.PropertyToID("_is_attack");
+    private static readonly int PlaneRendererIsFlip = Shader.PropertyToID("_is_flip");
+    private static readonly int PlaneRendererCharacterTexture = Shader.PropertyToID("_character_texture");
+
     public virtual void CheckRotate()
     {
         // Rotate the enemy towards the player
         // ...
-        if (this.faceDirection > 0)
-            this.plane.GetComponent<Renderer>().material.SetInt("_is_flip", 1);
-        else
-            this.plane.GetComponent<Renderer>().material.SetInt("_is_flip", 0);
+        this._planeRenderer.material.SetInt(PlaneRendererIsFlip, faceDirection ? 1 : 0);
     }
 
     public virtual void CheckAttack()
     {
         // Check if the enemy is in range to attack the player
         // ...
-        if (this.inAttackRange)
-            this.plane.GetComponent<Renderer>().material.SetInt("_is_attack", 1);
-        else
-            this.plane.GetComponent<Renderer>().material.SetInt("_is_attack", 0);
+        this._planeRenderer.material.SetInt(PlaneRendererIsAttack, this.inAttackRange?1:0);
     }
 
     public virtual void AddStatusEffect()
@@ -266,11 +323,9 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         // ...
     }
 
-    public virtual void BahaviourPattern()
-    {
-    }
+    public virtual void BahaviourPattern() { }
 
-    public Vector3 GetDirection(Vector3 currentPosition, Vector3 targetPosition)
+    public static Vector3 GetDirection(Vector3 currentPosition, Vector3 targetPosition)
     {
         return (targetPosition - currentPosition).normalized;
     }

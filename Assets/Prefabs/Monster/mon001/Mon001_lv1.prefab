@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 2337525266205312303}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.92387956, z: 0.38268343, w: 0}
-  m_LocalPosition: {x: 0, y: -0.25, z: 0.4}
+  m_LocalPosition: {x: 0, y: -0.65, z: 0.4}
   m_LocalScale: {x: 0.12, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -61,7 +61,6 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -876546973899608171, guid: 3c6fb1643b7594da49498c49f16a8255, type: 3}
   - {fileID: -876546973899608171, guid: 3c6fb1643b7594da49498c49f16a8255, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -215,7 +214,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -224,7 +223,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.4
+  m_Radius: 1.25
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
@@ -313,13 +312,12 @@ MonoBehaviour:
   attackDamage: 1
   inAttack: 0
   inAttackRange: 0
-  attackRange: 1.5
+  attackRange: 2
   attackCD: 1.5
-  inDefense: 0
-  defenseCD: 0
+  isDemageProcess: 0
   isPaused: 0
   target: {x: 0, y: 0, z: 0}
-  moveSpeed: 5
+  moveSpeed: 3
   updateRate: 3.5
   plane: {fileID: 0}
   monsterSkin: {fileID: 2800000, guid: 30fd63930318f49648e90633a82a9782, type: 3}
@@ -330,6 +328,6 @@ MonoBehaviour:
   patrolPoints: []
   detectionLayer:
     serializedVersion: 2
-    m_Bits: 768
+    m_Bits: 256
   attackPlane: {fileID: 4723159045283505926}
   attackSkin: {fileID: 2800000, guid: 11d3209b8263546d5aa2592c5906c3b9, type: 3}

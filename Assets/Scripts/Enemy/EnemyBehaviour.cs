@@ -198,4 +198,9 @@ public abstract class IEnemyBehaviour : MonoBehaviour
     }
 
     public virtual void BahaviourPattern() { }
+
+    protected void ResetAfterAttack()
+    {
+        throw new System.NotImplementedException();
+    }
 }
