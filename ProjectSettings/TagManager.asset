@@ -11,6 +11,9 @@ TagManager:
   - Monster
   - PlayerLight
   - AttackHitbox
+  - CanvasUI
+  - Item
+  - MapItem
   layers:
   - Default
   - TransparentFX
@@ -24,7 +27,7 @@ TagManager:
   - wall
   - ground
   - player_light
-  - 
+  - interactable
   - 
   - 
   - 

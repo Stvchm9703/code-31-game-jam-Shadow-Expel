@@ -48,7 +48,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     // public Vector3 lookingDirection => this.lookingRay.direction;
 
-    public List<Vector3> patrolPoints;
+    public List<Transform> patrolPoints;
 
     public LayerMask detectionLayer;
     private readonly RaycastHit[] _lookingRaycastHits = new RaycastHit[5];
@@ -178,9 +178,9 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     {
         int randomPointIndex = Random.Range(0, this.patrolPoints.Count);
         var randomPoint = new Vector3(
-            this.patrolPoints[randomPointIndex].x,
+            this.patrolPoints[randomPointIndex].position.x,
             this.transform.position.y,
-            this.patrolPoints[randomPointIndex].z
+            this.patrolPoints[randomPointIndex].position.z
         );
         this.target = randomPoint;
         yield return new WaitForSeconds(this.updateRate * 0.3f);
