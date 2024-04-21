@@ -107,9 +107,12 @@ public class PlayerMoveInputController : MonoBehaviour
 
     // gamepad left side / left-side joystick / A, S, D, W
     private Vector3 _rawMovementInput;
+
+    // private UIController _uiController;
     // private Rigidbody rb;
 
-
+    // private int activeToolIndex = 0; // 0 : none, 1 : lamp, 2 : sword
+    private bool isPaused => GameStateManager.Instance.CurrentGameState == GameState.Paused;
     private void Start()
     {
         // this.rb = this.transform.GetComponent<Rigidbody>();
@@ -122,15 +125,23 @@ public class PlayerMoveInputController : MonoBehaviour
         // onAnimatorInit();
         // onInputMapInit();
         this._spotLightRay = new Ray(transform1.position, transform1.forward);
+        GameStateManager.Instance.OnGameStateChanged += this.onGameStateChanged;
+    }
+
+    private void OnDestroy()
+    {
+        GameStateManager.Instance.OnGameStateChanged -= this.onGameStateChanged;
     }
 
     // Update is called once per frame
     private void FixedUpdate()
     {
-        this.MovementUpdate(Time.deltaTime);
+        if (this.isPaused) return;
+        this.MovementUpdate(Time.fixedDeltaTime);
         if (this.isAttack) this.DetectHitted();
         this.DetechItem();
         Debug.DrawRay(this._spotLightRay.origin, this._spotLightRay.direction * this.spotLightRange, Color.blue);
+        // this.CheckAtiveTool();
     }
 
     private void OnDrawGizmosSelected()
@@ -149,6 +160,18 @@ public class PlayerMoveInputController : MonoBehaviour
         //     Debug.Log("Item Touched: " + hited.name);
         //     if (!this._itemTouched.Contains(hited))  this._itemTouched.Add(hited);
         // }
+    }
+    
+    public void onGameStateChanged(GameState newGameState)
+    {
+        if (newGameState == GameState.Paused || newGameState == GameState.InventoryMenu)
+        {
+            _animationController.Pause();
+        }
+        else if (newGameState == GameState.InGame)
+        {   
+            this._animationController.Resume();
+        }
     }
 
     private IEnumerable Attack()
@@ -183,30 +206,23 @@ public class PlayerMoveInputController : MonoBehaviour
         if (!this.isDashing && this.dashGasCount < this.maxDashGasCount) this.dashGasCount += deltaTime;
     }
 
-    public void onMoveEvent(InputAction.CallbackContext context)
+    public void onMove(InputAction.CallbackContext context)
     {
         this._rawMovementInput = context.ReadValue<Vector3>();
-        // var RawMovementInput2 = context.ReadValueAsButton();
-        // Debug.Log("Move Event: x:" + RawMovementInput2);
-
+        
         // Jumping
-        if (context.performed)
-        {
-            // if (RawMovementInput.y > 0 && jumpCount < maxJumpCount)
-            // {
-            //     rb.AddForce(Vector3.up * 5, ForceMode.VelocityChange);
-            //     jumpCount++;
-            // }
-            if (this._rawMovementInput.x == 0 && this._rawMovementInput.z == 0)
-                this.playerState = PlayerState.Idle;
-            else
-                this.playerState = PlayerState.Move;
+        //
+        //
+        
+        if (this._rawMovementInput.x == 0 && this._rawMovementInput.z == 0)
+            this.playerState = PlayerState.Idle;
+        else
+            this.playerState = PlayerState.Move;
+        this.UpdateAnimation();
 
-            this.UpdateAnimation();
-        }
     }
 
-    public void onDashEvent(InputAction.CallbackContext context)
+    public void onDash(InputAction.CallbackContext context)
     {
         var ctx = context.ReadValue<float>();
         // Debug.Log("Dash Event: " + ctx);
@@ -274,13 +290,12 @@ public class PlayerMoveInputController : MonoBehaviour
         }
     }
 
-    public void onLookEvent(InputAction.CallbackContext context)
+    public void onLook(InputAction.CallbackContext context)
     {
         // RawFacingDirection = context.ReadValue<Vector2>();
-        InputDevice inputDevice = context.control.device;
         var ctx = context.ReadValue<Vector2>();
-        float angle = 0;
-        if (inputDevice == InputSystem.GetDevice<Mouse>())
+        float angle;
+        if (context.control.device == InputSystem.GetDevice<Mouse>())
         {
             Vector3 screenPos = this._mainCamera.WorldToScreenPoint(this.transform.position);
             angle = Mathf.Atan2(ctx.y - screenPos.y, ctx.x - screenPos.x);
@@ -296,14 +311,13 @@ public class PlayerMoveInputController : MonoBehaviour
         Tween.LocalRotation(this._lightTransform, new Vector3(0, angle * -Mathf.Rad2Deg, 0), 0.5f);
         this._spotLightRay.direction = Quaternion.Euler(0, angle * -Mathf.Rad2Deg + 90, 0) * this.transform.forward * this.spotLightRange;
         UpdateAnimation();
-
     }
 
     /// <summary>
     ///     Attack / Interact Event
     /// </summary>
     /// <param name="context"></param>
-    public void onAttackEvent(InputAction.CallbackContext context)
+    public void onAttackInteract(InputAction.CallbackContext context)
     {
         var ctx = context.ReadValue<float>();
         if (this.itemTouched.Count > 0)
@@ -358,82 +372,87 @@ public class PlayerMoveInputController : MonoBehaviour
         }
     }
 
-    public void onSkillAttack1Event(InputAction.CallbackContext context)
-    {
-        // Debug.Log("SkillAttack1 Event: " + context.ReadValue<float>());
-        var ctx = context.ReadValue<float>();
-        if (ctx > 0)
-        {
-            this.isAttack = true;
-            this.playerState = PlayerState.SkillAttack1;
-        }
-        else
-        {
-            this.isAttack = false;
-            this.playerState = this.isMoving
-                ? PlayerState.Move
-                : PlayerState.Idle;
-        }
+    // public void OnSkillAttack1Event(InputAction.CallbackContext context)
+    // {
+    //     // Debug.Log("SkillAttack1 Event: " + context.ReadValue<float>());
+    //     var ctx = context.ReadValue<float>();
+    //     if (ctx > 0)
+    //     {
+    //         this.isAttack = true;
+    //         this.playerState = PlayerState.SkillAttack1;
+    //     }
+    //     else
+    //     {
+    //         this.isAttack = false;
+    //         this.playerState = this.isMoving
+    //             ? PlayerState.Move
+    //             : PlayerState.Idle;
+    //     }
+    //
+    //     if (context.performed) this.UpdateAnimation();
+    //     // StartCoroutine(Attack());
+    //     // bulletGeneratorMono.Shoot();
+    // }
+    //
+    // public void OnSkillAttack2Event(InputAction.CallbackContext context)
+    // {
+    //     var ctx = context.ReadValue<float>();
+    //     if (ctx > 0)
+    //     {
+    //         this.isAttack = true;
+    //         this.playerState = PlayerState.SkillAttack2;
+    //     }
+    //     else
+    //     {
+    //         this.isAttack = false;
+    //         this.playerState = this.isMoving
+    //             ? PlayerState.Move
+    //             : PlayerState.Idle;
+    //     }
+    //
+    //     if (context.performed) this.UpdateAnimation();
+    //     // StartCoroutine(Attack());
+    // }
+    //
+    // public void OnSkillAttack3Event(InputAction.CallbackContext context)
+    // {
+    //     var ctx = context.ReadValue<float>();
+    //     if (ctx > 0)
+    //     {
+    //         this.isAttack = true;
+    //         this.playerState = PlayerState.SkillAttack3;
+    //     }
+    //     else
+    //     {
+    //         this.isAttack = false;
+    //         this.playerState = this.isMoving
+    //             ? PlayerState.Move
+    //             : PlayerState.Idle;
+    //     }
+    //
+    //     if (context.performed) this.UpdateAnimation();
+    //     // StartCoroutine(Attack());
+    // }
+    //
+    // private void OnSwitchEvent(InputAction.CallbackContext context)
+    // {
+    // }
+    //
+    // private void OnBlockEvent(InputAction.CallbackContext context)
+    // {
+    //     this.isAttack = false;
+    // }
 
-        if (context.performed) this.UpdateAnimation();
-        // StartCoroutine(Attack());
-        // bulletGeneratorMono.Shoot();
-    }
+    // public void OnMenu(InputAction.CallbackContext context)
+    // {
+    //     var ctx = context.ReadValue<float>();
+    //     if (context.performed && ctx > 0)
+    //     {
+    //         this._uiController.PauseGame();
+    //     }
+    // }
 
-    public void onSkillAttack2Event(InputAction.CallbackContext context)
-    {
-        var ctx = context.ReadValue<float>();
-        if (ctx > 0)
-        {
-            this.isAttack = true;
-            this.playerState = PlayerState.SkillAttack2;
-        }
-        else
-        {
-            this.isAttack = false;
-            this.playerState = this.isMoving
-                ? PlayerState.Move
-                : PlayerState.Idle;
-        }
-
-        if (context.performed) this.UpdateAnimation();
-        // StartCoroutine(Attack());
-    }
-
-    public void onSkillAttack3Event(InputAction.CallbackContext context)
-    {
-        var ctx = context.ReadValue<float>();
-        if (ctx > 0)
-        {
-            this.isAttack = true;
-            this.playerState = PlayerState.SkillAttack3;
-        }
-        else
-        {
-            this.isAttack = false;
-            this.playerState = this.isMoving
-                ? PlayerState.Move
-                : PlayerState.Idle;
-        }
-
-        if (context.performed) this.UpdateAnimation();
-        // StartCoroutine(Attack());
-    }
-
-    private void onSwitchEvent(InputAction.CallbackContext context)
-    {
-    }
-
-    private void onBlockEvent(InputAction.CallbackContext context)
-    {
-        this.isAttack = false;
-    }
-
-    private void onMenuEvent(InputAction.CallbackContext context)
-    {
-    }
-
-    private void onItemEvent(InputAction.CallbackContext context)
+    public void onItem(InputAction.CallbackContext context)
     {
     }
 
@@ -463,11 +482,13 @@ public class PlayerMoveInputController : MonoBehaviour
         // down left
         if (this._rawFacingAngle > -180 && this._rawFacingAngle <= -90)
             return PlayerDirection.DownLeft;
-            // down right
-            
+        // down right
+
         if (this._rawFacingAngle > -90 && this._rawFacingAngle <= 0)
             return PlayerDirection.DownRight;
 
         return PlayerDirection.DownRight;
     }
+    
+    
 }

@@ -102,12 +102,12 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     }
 
     // call this method in the Implement FixedUpdate
-    public void onUpdate()
+    public virtual void onUpdate()
     {
         if (this.isPaused == false)
         {
-            this.Move(Time.deltaTime);
-            this.DetectPlayer(Time.deltaTime);
+            this.Move(Time.fixedDeltaTime);
+            this.DetectPlayer(Time.fixedDeltaTime);
             this.CheckAttack();
             // Debug.DrawRay(this.lookingRay.origin, this.lookingRay.direction * this.detectionRange, Color.red);
         }
@@ -125,8 +125,17 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
                 else
                     this.UpdateTarget();
             }
+            else
+            {
+                yield return new WaitUntil(() => this.isPaused == false);
+            }
             yield return new WaitForSeconds(this.updateRate);
         }
+    }
+    
+    public void onGameStateChanged(GameState newGameState)
+    {
+        this.isPaused = newGameState == GameState.Paused || newGameState == GameState.GameOver;
     }
 
     public virtual void DetectPlayer(float timeChange)

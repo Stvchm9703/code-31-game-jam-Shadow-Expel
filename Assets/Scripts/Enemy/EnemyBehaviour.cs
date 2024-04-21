@@ -63,7 +63,7 @@ public abstract class IEnemyBehaviour : MonoBehaviour
             else
             {
                 // move towards the player
-                Move(Time.deltaTime);
+                Move(Time.fixedDeltaTime);
             }
             CheckAttack();
         }
