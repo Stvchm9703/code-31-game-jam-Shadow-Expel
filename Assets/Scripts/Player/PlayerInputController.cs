@@ -112,7 +112,8 @@ public class PlayerMoveInputController : MonoBehaviour
     // private Rigidbody rb;
 
     // private int activeToolIndex = 0; // 0 : none, 1 : lamp, 2 : sword
-    private bool isPaused => GameStateManager.Instance.CurrentGameState == GameState.Paused;
+    // private bool isPaused => GameStateManager.Instance.CurrentGameState == GameState.Paused;
+    private bool isPaused = false;
     private void Start()
     {
         // this.rb = this.transform.GetComponent<Rigidbody>();
@@ -167,10 +168,12 @@ public class PlayerMoveInputController : MonoBehaviour
         if (newGameState == GameState.Paused || newGameState == GameState.InventoryMenu)
         {
             _animationController.Pause();
+            this.isPaused = true;
         }
         else if (newGameState == GameState.InGame)
         {   
             this._animationController.Resume();
+            this.isPaused = false;
         }
     }
 

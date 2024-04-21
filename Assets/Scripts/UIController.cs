@@ -73,7 +73,7 @@ public class UIController : MonoBehaviour
             ? GameState.Paused
             : GameState.InGame;
         GameStateManager.Instance.SetState(newGameState);
-       
+        
     }
 
 

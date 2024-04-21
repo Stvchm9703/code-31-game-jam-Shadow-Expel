@@ -6,6 +6,20 @@ Shader "Enviroment/WallPlane"
             [NoScaleOffset]_NormalMap("NormalMap", 2D) = "white" {}
             _Scale("Scale", Float) = 1
             [ToggleUI]_UseLighting("UseLighting", Float) = 1
+            [HideInInspector]_WorkflowMode("_WorkflowMode", Float) = 1
+            [HideInInspector]_CastShadows("_CastShadows", Float) = 1
+            [HideInInspector]_ReceiveShadows("_ReceiveShadows", Float) = 1
+            [HideInInspector]_Surface("_Surface", Float) = 1
+            [HideInInspector]_Blend("_Blend", Float) = 0
+            [HideInInspector]_AlphaClip("_AlphaClip", Float) = 0
+            [HideInInspector]_BlendModePreserveSpecular("_BlendModePreserveSpecular", Float) = 0
+            [HideInInspector]_SrcBlend("_SrcBlend", Float) = 1
+            [HideInInspector]_DstBlend("_DstBlend", Float) = 0
+            [HideInInspector][ToggleUI]_ZWrite("_ZWrite", Float) = 0
+            [HideInInspector]_ZWriteControl("_ZWriteControl", Float) = 1
+            [HideInInspector]_ZTest("_ZTest", Float) = 4
+            [HideInInspector]_Cull("_Cull", Float) = 2
+            [HideInInspector]_AlphaToMask("_AlphaToMask", Float) = 0
             [HideInInspector]_QueueOffset("_QueueOffset", Float) = 0
             [HideInInspector]_QueueControl("_QueueControl", Float) = -1
             [HideInInspector][NoScaleOffset]unity_Lightmaps("unity_Lightmaps", 2DArray) = "" {}
@@ -33,10 +47,11 @@ Shader "Enviroment/WallPlane"
                 }
             
             // Render State
-            Cull Back
-                Blend SrcAlpha OneMinusSrcAlpha, One OneMinusSrcAlpha
-                ZTest LEqual
-                ZWrite Off
+            Cull [_Cull]
+                Blend [_SrcBlend] [_DstBlend]
+                ZTest [_ZTest]
+                ZWrite [_ZWrite]
+                AlphaToMask [_AlphaToMask]
             
             // Debug
             // <None>
@@ -73,6 +88,12 @@ Shader "Enviroment/WallPlane"
                 #pragma multi_compile_fragment _ _LIGHT_COOKIES
                 #pragma multi_compile _ _FORWARD_PLUS
                 #pragma multi_compile _ EVALUATE_SH_MIXED EVALUATE_SH_VERTEX
+                #pragma shader_feature_fragment _ _SURFACE_TYPE_TRANSPARENT
+                #pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON
+                #pragma shader_feature_local_fragment _ _ALPHAMODULATE_ON
+                #pragma shader_feature_local_fragment _ _ALPHATEST_ON
+                #pragma shader_feature_local_fragment _ _SPECULAR_SETUP
+                #pragma shader_feature_local _ _RECEIVE_SHADOWS_OFF
             // GraphKeywords: <None>
             
             // Defines
@@ -96,8 +117,6 @@ Shader "Enviroment/WallPlane"
             /* WARNING: $splice Could not find named fragment 'PassInstancing' */
             #define SHADERPASS SHADERPASS_FORWARD
                 #define _FOG_FRAGMENT 1
-                #define _SURFACE_TYPE_TRANSPARENT 1
-                #define _RECEIVE_SHADOWS_OFF 1
             
             
             // custom interpolator pre-include
@@ -119,6 +138,7 @@ Shader "Enviroment/WallPlane"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DBuffer.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             
             // --------------------------------------------------
             // Structs and Packing
@@ -173,9 +193,7 @@ Shader "Enviroment/WallPlane"
                 };
                 struct SurfaceDescriptionInputs
                 {
-                     float3 WorldSpaceNormal;
                      float3 TangentSpaceNormal;
-                     float3 WorldSpacePosition;
                      float4 uv0;
                 };
                 struct VertexDescriptionInputs
@@ -312,7 +330,7 @@ Shader "Enviroment/WallPlane"
                 SAMPLER(sampler_NormalMap);
             
             // Graph Includes
-            #include "Assets/Shaders/LightingBreakdown.hlsl"
+            // GraphIncludes: <None>
             
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
@@ -327,64 +345,6 @@ Shader "Enviroment/WallPlane"
             
             // Graph Functions
             
-                void Unity_DotProduct_float3(float3 A, float3 B, out float Out)
-                {
-                    Out = dot(A, B);
-                }
-                
-                void Unity_Saturate_float(float In, out float Out)
-                {
-                    Out = saturate(In);
-                }
-                
-                void Unity_Multiply_half_half(half A, half B, out half Out)
-                {
-                Out = A * B;
-                }
-                
-                void Unity_Multiply_float3_float3(float3 A, float3 B, out float3 Out)
-                {
-                Out = A * B;
-                }
-                
-                void Unity_Multiply_half3_half3(half3 A, half3 B, out half3 Out)
-                {
-                Out = A * B;
-                }
-                
-                void Unity_Add_float3(float3 A, float3 B, out float3 Out)
-                {
-                    Out = A + B;
-                }
-                
-                struct Bindings_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float
-                {
-                float3 WorldSpaceNormal;
-                float3 WorldSpacePosition;
-                };
-                
-                void SG_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float(Bindings_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float IN, out float3 Lighting_1)
-                {
-                half3 _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Direction_1_Vector3;
-                half3 _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Color_2_Vector3;
-                half _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_DistanceAtten_3_Float;
-                half _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_ShadowAtten_4_Float;
-                MainLight_half(IN.WorldSpacePosition, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Direction_1_Vector3, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Color_2_Vector3, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_DistanceAtten_3_Float, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_ShadowAtten_4_Float);
-                float _DotProduct_d09cbd5d5aac49d586df4da8c3a657ca_Out_2_Float;
-                Unity_DotProduct_float3(IN.WorldSpaceNormal, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Direction_1_Vector3, _DotProduct_d09cbd5d5aac49d586df4da8c3a657ca_Out_2_Float);
-                float _Saturate_82b3a3038bef44dcb5b293d653776a20_Out_1_Float;
-                Unity_Saturate_float(_DotProduct_d09cbd5d5aac49d586df4da8c3a657ca_Out_2_Float, _Saturate_82b3a3038bef44dcb5b293d653776a20_Out_1_Float);
-                half _Multiply_1c4d47a89fbb49e0a854aa216ee6b691_Out_2_Float;
-                Unity_Multiply_half_half(_MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_DistanceAtten_3_Float, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_ShadowAtten_4_Float, _Multiply_1c4d47a89fbb49e0a854aa216ee6b691_Out_2_Float);
-                half3 _Multiply_ecb8128c4bfd4e25a82765350c71a764_Out_2_Vector3;
-                Unity_Multiply_half3_half3(_MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Color_2_Vector3, (_Multiply_1c4d47a89fbb49e0a854aa216ee6b691_Out_2_Float.xxx), _Multiply_ecb8128c4bfd4e25a82765350c71a764_Out_2_Vector3);
-                float3 _Multiply_be8b0ec1ebb24d1da3ebc9123c665841_Out_2_Vector3;
-                Unity_Multiply_float3_float3((_Saturate_82b3a3038bef44dcb5b293d653776a20_Out_1_Float.xxx), _Multiply_ecb8128c4bfd4e25a82765350c71a764_Out_2_Vector3, _Multiply_be8b0ec1ebb24d1da3ebc9123c665841_Out_2_Vector3);
-                float3 _Add_0575b3b615c646bebd5df45654b43d79_Out_2_Vector3;
-                Unity_Add_float3(SHADERGRAPH_AMBIENT_SKY, _Multiply_be8b0ec1ebb24d1da3ebc9123c665841_Out_2_Vector3, _Add_0575b3b615c646bebd5df45654b43d79_Out_2_Vector3);
-                Lighting_1 = _Add_0575b3b615c646bebd5df45654b43d79_Out_2_Vector3;
-                }
-                
                 void Unity_Multiply_float_float(float A, float B, out float Out)
                 {
                     Out = A * B;
@@ -393,11 +353,6 @@ Shader "Enviroment/WallPlane"
                 void Unity_TilingAndOffset_float(float2 UV, float2 Tiling, float2 Offset, out float2 Out)
                 {
                     Out = UV * Tiling + Offset;
-                }
-                
-                void Unity_Branch_float3(float Predicate, float3 True, float3 False, out float3 Out)
-                {
-                    Out = Predicate ? True : False;
                 }
             
             // Custom interpolators pre vertex
@@ -436,20 +391,16 @@ Shader "Enviroment/WallPlane"
                     float3 NormalTS;
                     float3 Emission;
                     float Metallic;
+                    float3 Specular;
                     float Smoothness;
                     float Occlusion;
                     float Alpha;
+                    float AlphaClipThreshold;
                 };
                 
                 SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
                 {
                     SurfaceDescription surface = (SurfaceDescription)0;
-                    float _Property_a0bbd5a4841c4d8fb40b661d55284a04_Out_0_Boolean = _UseLighting;
-                    Bindings_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4;
-                    _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4.WorldSpaceNormal = IN.WorldSpaceNormal;
-                    _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4.WorldSpacePosition = IN.WorldSpacePosition;
-                    float3 _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4_Lighting_1_Vector3;
-                    SG_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float(_var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4, _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4_Lighting_1_Vector3);
                     UnityTexture2D _Property_9257dd9d985242c584e82e1b9c414df2_Out_0_Texture2D = UnityBuildTexture2DStructNoScale(_BaseMap);
                     float _Split_8f3ad494e0004074b9d5a8202ee9e79c_R_1_Float = float3(length(float3(UNITY_MATRIX_M[0].x, UNITY_MATRIX_M[1].x, UNITY_MATRIX_M[2].x)),
                                              length(float3(UNITY_MATRIX_M[0].y, UNITY_MATRIX_M[1].y, UNITY_MATRIX_M[2].y)),
@@ -474,10 +425,6 @@ Shader "Enviroment/WallPlane"
                     float _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_G_5_Float = _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.g;
                     float _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_B_6_Float = _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.b;
                     float _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_A_7_Float = _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.a;
-                    float3 _Multiply_a341bbd2964348f9a4279cc0e1023de3_Out_2_Vector3;
-                    Unity_Multiply_float3_float3(_var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4_Lighting_1_Vector3, (_SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.xyz), _Multiply_a341bbd2964348f9a4279cc0e1023de3_Out_2_Vector3);
-                    float3 _Branch_9d8cf166532e42a3b26a613f0a973878_Out_3_Vector3;
-                    Unity_Branch_float3(_Property_a0bbd5a4841c4d8fb40b661d55284a04_Out_0_Boolean, _Multiply_a341bbd2964348f9a4279cc0e1023de3_Out_2_Vector3, (_SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.xyz), _Branch_9d8cf166532e42a3b26a613f0a973878_Out_3_Vector3);
                     UnityTexture2D _Property_93f03b5e6f234176862645a293bc6c4e_Out_0_Texture2D = UnityBuildTexture2DStructNoScale(_NormalMap);
                     float4 _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_RGBA_0_Vector4 = SAMPLE_TEXTURE2D(_Property_93f03b5e6f234176862645a293bc6c4e_Out_0_Texture2D.tex, _Property_93f03b5e6f234176862645a293bc6c4e_Out_0_Texture2D.samplerstate, _Property_93f03b5e6f234176862645a293bc6c4e_Out_0_Texture2D.GetTransformedUV(_TilingAndOffset_adf99e9ac4144fa8b7f902d8eed6fd2f_Out_3_Vector2) );
                     _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_RGBA_0_Vector4.rgb = UnpackNormal(_SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_RGBA_0_Vector4);
@@ -485,13 +432,15 @@ Shader "Enviroment/WallPlane"
                     float _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_G_5_Float = _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_RGBA_0_Vector4.g;
                     float _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_B_6_Float = _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_RGBA_0_Vector4.b;
                     float _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_A_7_Float = _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_RGBA_0_Vector4.a;
-                    surface.BaseColor = _Branch_9d8cf166532e42a3b26a613f0a973878_Out_3_Vector3;
+                    surface.BaseColor = (_SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.xyz);
                     surface.NormalTS = (_SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_RGBA_0_Vector4.xyz);
                     surface.Emission = float3(0, 0, 0);
                     surface.Metallic = 0;
-                    surface.Smoothness = 0.5;
+                    surface.Specular = IsGammaSpace() ? float3(0.5, 0.5, 0.5) : SRGBToLinear(float3(0.5, 0.5, 0.5));
+                    surface.Smoothness = 0.2;
                     surface.Occlusion = 1;
                     surface.Alpha = 1;
+                    surface.AlphaClipThreshold = 0.5;
                     return surface;
                 }
             
@@ -530,16 +479,11 @@ Shader "Enviroment/WallPlane"
                 
                     
                 
-                    // must use interpolated tangent, bitangent and normal before they are normalized in the pixel shader.
-                    float3 unnormalizedNormalWS = input.normalWS;
-                    const float renormFactor = 1.0 / length(unnormalizedNormalWS);
                 
                 
-                    output.WorldSpaceNormal = renormFactor * input.normalWS.xyz;      // we want a unit length Normal Vector node in shader graph
                     output.TangentSpaceNormal = float3(0.0f, 0.0f, 1.0f);
                 
                 
-                    output.WorldSpacePosition = input.positionWS;
                 
                     #if UNITY_UV_STARTS_AT_TOP
                     #else
@@ -581,10 +525,10 @@ Shader "Enviroment/WallPlane"
                 }
             
             // Render State
-            Cull Back
-                Blend SrcAlpha OneMinusSrcAlpha, One OneMinusSrcAlpha
-                ZTest LEqual
-                ZWrite Off
+            Cull [_Cull]
+                Blend [_SrcBlend] [_DstBlend]
+                ZTest [_ZTest]
+                ZWrite [_ZWrite]
             
             // Debug
             // <None>
@@ -618,6 +562,12 @@ Shader "Enviroment/WallPlane"
                 #pragma multi_compile_fragment _ _GBUFFER_NORMALS_OCT
                 #pragma multi_compile_fragment _ _RENDER_PASS_ENABLED
                 #pragma multi_compile_fragment _ DEBUG_DISPLAY
+                #pragma shader_feature_fragment _ _SURFACE_TYPE_TRANSPARENT
+                #pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON
+                #pragma shader_feature_local_fragment _ _ALPHAMODULATE_ON
+                #pragma shader_feature_local_fragment _ _ALPHATEST_ON
+                #pragma shader_feature_local_fragment _ _SPECULAR_SETUP
+                #pragma shader_feature_local _ _RECEIVE_SHADOWS_OFF
             // GraphKeywords: <None>
             
             // Defines
@@ -641,8 +591,6 @@ Shader "Enviroment/WallPlane"
             /* WARNING: $splice Could not find named fragment 'PassInstancing' */
             #define SHADERPASS SHADERPASS_GBUFFER
                 #define _FOG_FRAGMENT 1
-                #define _SURFACE_TYPE_TRANSPARENT 1
-                #define _RECEIVE_SHADOWS_OFF 1
             
             
             // custom interpolator pre-include
@@ -718,9 +666,7 @@ Shader "Enviroment/WallPlane"
                 };
                 struct SurfaceDescriptionInputs
                 {
-                     float3 WorldSpaceNormal;
                      float3 TangentSpaceNormal;
-                     float3 WorldSpacePosition;
                      float4 uv0;
                 };
                 struct VertexDescriptionInputs
@@ -857,7 +803,7 @@ Shader "Enviroment/WallPlane"
                 SAMPLER(sampler_NormalMap);
             
             // Graph Includes
-            #include "Assets/Shaders/LightingBreakdown.hlsl"
+            // GraphIncludes: <None>
             
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
@@ -872,64 +818,6 @@ Shader "Enviroment/WallPlane"
             
             // Graph Functions
             
-                void Unity_DotProduct_float3(float3 A, float3 B, out float Out)
-                {
-                    Out = dot(A, B);
-                }
-                
-                void Unity_Saturate_float(float In, out float Out)
-                {
-                    Out = saturate(In);
-                }
-                
-                void Unity_Multiply_half_half(half A, half B, out half Out)
-                {
-                Out = A * B;
-                }
-                
-                void Unity_Multiply_float3_float3(float3 A, float3 B, out float3 Out)
-                {
-                Out = A * B;
-                }
-                
-                void Unity_Multiply_half3_half3(half3 A, half3 B, out half3 Out)
-                {
-                Out = A * B;
-                }
-                
-                void Unity_Add_float3(float3 A, float3 B, out float3 Out)
-                {
-                    Out = A + B;
-                }
-                
-                struct Bindings_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float
-                {
-                float3 WorldSpaceNormal;
-                float3 WorldSpacePosition;
-                };
-                
-                void SG_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float(Bindings_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float IN, out float3 Lighting_1)
-                {
-                half3 _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Direction_1_Vector3;
-                half3 _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Color_2_Vector3;
-                half _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_DistanceAtten_3_Float;
-                half _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_ShadowAtten_4_Float;
-                MainLight_half(IN.WorldSpacePosition, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Direction_1_Vector3, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Color_2_Vector3, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_DistanceAtten_3_Float, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_ShadowAtten_4_Float);
-                float _DotProduct_d09cbd5d5aac49d586df4da8c3a657ca_Out_2_Float;
-                Unity_DotProduct_float3(IN.WorldSpaceNormal, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Direction_1_Vector3, _DotProduct_d09cbd5d5aac49d586df4da8c3a657ca_Out_2_Float);
-                float _Saturate_82b3a3038bef44dcb5b293d653776a20_Out_1_Float;
-                Unity_Saturate_float(_DotProduct_d09cbd5d5aac49d586df4da8c3a657ca_Out_2_Float, _Saturate_82b3a3038bef44dcb5b293d653776a20_Out_1_Float);
-                half _Multiply_1c4d47a89fbb49e0a854aa216ee6b691_Out_2_Float;
-                Unity_Multiply_half_half(_MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_DistanceAtten_3_Float, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_ShadowAtten_4_Float, _Multiply_1c4d47a89fbb49e0a854aa216ee6b691_Out_2_Float);
-                half3 _Multiply_ecb8128c4bfd4e25a82765350c71a764_Out_2_Vector3;
-                Unity_Multiply_half3_half3(_MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Color_2_Vector3, (_Multiply_1c4d47a89fbb49e0a854aa216ee6b691_Out_2_Float.xxx), _Multiply_ecb8128c4bfd4e25a82765350c71a764_Out_2_Vector3);
-                float3 _Multiply_be8b0ec1ebb24d1da3ebc9123c665841_Out_2_Vector3;
-                Unity_Multiply_float3_float3((_Saturate_82b3a3038bef44dcb5b293d653776a20_Out_1_Float.xxx), _Multiply_ecb8128c4bfd4e25a82765350c71a764_Out_2_Vector3, _Multiply_be8b0ec1ebb24d1da3ebc9123c665841_Out_2_Vector3);
-                float3 _Add_0575b3b615c646bebd5df45654b43d79_Out_2_Vector3;
-                Unity_Add_float3(SHADERGRAPH_AMBIENT_SKY, _Multiply_be8b0ec1ebb24d1da3ebc9123c665841_Out_2_Vector3, _Add_0575b3b615c646bebd5df45654b43d79_Out_2_Vector3);
-                Lighting_1 = _Add_0575b3b615c646bebd5df45654b43d79_Out_2_Vector3;
-                }
-                
                 void Unity_Multiply_float_float(float A, float B, out float Out)
                 {
                     Out = A * B;
@@ -938,11 +826,6 @@ Shader "Enviroment/WallPlane"
                 void Unity_TilingAndOffset_float(float2 UV, float2 Tiling, float2 Offset, out float2 Out)
                 {
                     Out = UV * Tiling + Offset;
-                }
-                
-                void Unity_Branch_float3(float Predicate, float3 True, float3 False, out float3 Out)
-                {
-                    Out = Predicate ? True : False;
                 }
             
             // Custom interpolators pre vertex
@@ -981,20 +864,16 @@ Shader "Enviroment/WallPlane"
                     float3 NormalTS;
                     float3 Emission;
                     float Metallic;
+                    float3 Specular;
                     float Smoothness;
                     float Occlusion;
                     float Alpha;
+                    float AlphaClipThreshold;
                 };
                 
                 SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
                 {
                     SurfaceDescription surface = (SurfaceDescription)0;
-                    float _Property_a0bbd5a4841c4d8fb40b661d55284a04_Out_0_Boolean = _UseLighting;
-                    Bindings_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4;
-                    _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4.WorldSpaceNormal = IN.WorldSpaceNormal;
-                    _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4.WorldSpacePosition = IN.WorldSpacePosition;
-                    float3 _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4_Lighting_1_Vector3;
-                    SG_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float(_var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4, _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4_Lighting_1_Vector3);
                     UnityTexture2D _Property_9257dd9d985242c584e82e1b9c414df2_Out_0_Texture2D = UnityBuildTexture2DStructNoScale(_BaseMap);
                     float _Split_8f3ad494e0004074b9d5a8202ee9e79c_R_1_Float = float3(length(float3(UNITY_MATRIX_M[0].x, UNITY_MATRIX_M[1].x, UNITY_MATRIX_M[2].x)),
                                              length(float3(UNITY_MATRIX_M[0].y, UNITY_MATRIX_M[1].y, UNITY_MATRIX_M[2].y)),
@@ -1019,10 +898,6 @@ Shader "Enviroment/WallPlane"
                     float _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_G_5_Float = _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.g;
                     float _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_B_6_Float = _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.b;
                     float _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_A_7_Float = _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.a;
-                    float3 _Multiply_a341bbd2964348f9a4279cc0e1023de3_Out_2_Vector3;
-                    Unity_Multiply_float3_float3(_var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4_Lighting_1_Vector3, (_SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.xyz), _Multiply_a341bbd2964348f9a4279cc0e1023de3_Out_2_Vector3);
-                    float3 _Branch_9d8cf166532e42a3b26a613f0a973878_Out_3_Vector3;
-                    Unity_Branch_float3(_Property_a0bbd5a4841c4d8fb40b661d55284a04_Out_0_Boolean, _Multiply_a341bbd2964348f9a4279cc0e1023de3_Out_2_Vector3, (_SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.xyz), _Branch_9d8cf166532e42a3b26a613f0a973878_Out_3_Vector3);
                     UnityTexture2D _Property_93f03b5e6f234176862645a293bc6c4e_Out_0_Texture2D = UnityBuildTexture2DStructNoScale(_NormalMap);
                     float4 _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_RGBA_0_Vector4 = SAMPLE_TEXTURE2D(_Property_93f03b5e6f234176862645a293bc6c4e_Out_0_Texture2D.tex, _Property_93f03b5e6f234176862645a293bc6c4e_Out_0_Texture2D.samplerstate, _Property_93f03b5e6f234176862645a293bc6c4e_Out_0_Texture2D.GetTransformedUV(_TilingAndOffset_adf99e9ac4144fa8b7f902d8eed6fd2f_Out_3_Vector2) );
                     _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_RGBA_0_Vector4.rgb = UnpackNormal(_SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_RGBA_0_Vector4);
@@ -1030,13 +905,15 @@ Shader "Enviroment/WallPlane"
                     float _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_G_5_Float = _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_RGBA_0_Vector4.g;
                     float _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_B_6_Float = _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_RGBA_0_Vector4.b;
                     float _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_A_7_Float = _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_RGBA_0_Vector4.a;
-                    surface.BaseColor = _Branch_9d8cf166532e42a3b26a613f0a973878_Out_3_Vector3;
+                    surface.BaseColor = (_SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.xyz);
                     surface.NormalTS = (_SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_RGBA_0_Vector4.xyz);
                     surface.Emission = float3(0, 0, 0);
                     surface.Metallic = 0;
-                    surface.Smoothness = 0.5;
+                    surface.Specular = IsGammaSpace() ? float3(0.5, 0.5, 0.5) : SRGBToLinear(float3(0.5, 0.5, 0.5));
+                    surface.Smoothness = 0.2;
                     surface.Occlusion = 1;
                     surface.Alpha = 1;
+                    surface.AlphaClipThreshold = 0.5;
                     return surface;
                 }
             
@@ -1075,16 +952,11 @@ Shader "Enviroment/WallPlane"
                 
                     
                 
-                    // must use interpolated tangent, bitangent and normal before they are normalized in the pixel shader.
-                    float3 unnormalizedNormalWS = input.normalWS;
-                    const float renormFactor = 1.0 / length(unnormalizedNormalWS);
                 
                 
-                    output.WorldSpaceNormal = renormFactor * input.normalWS.xyz;      // we want a unit length Normal Vector node in shader graph
                     output.TangentSpaceNormal = float3(0.0f, 0.0f, 1.0f);
                 
                 
-                    output.WorldSpacePosition = input.positionWS;
                 
                     #if UNITY_UV_STARTS_AT_TOP
                     #else
@@ -1120,6 +992,320 @@ Shader "Enviroment/WallPlane"
             }
             Pass
             {
+                Name "ShadowCaster"
+                Tags
+                {
+                    "LightMode" = "ShadowCaster"
+                }
+            
+            // Render State
+            Cull [_Cull]
+                ZTest LEqual
+                ZWrite On
+                ColorMask 0
+            
+            // Debug
+            // <None>
+            
+            // --------------------------------------------------
+            // Pass
+            
+            HLSLPROGRAM
+            
+            // Pragmas
+            #pragma target 2.0
+                #pragma multi_compile_instancing
+                #pragma vertex vert
+                #pragma fragment frag
+            
+            // Keywords
+            #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
+                #pragma shader_feature_local_fragment _ _ALPHATEST_ON
+            // GraphKeywords: <None>
+            
+            // Defines
+            
+            #define _NORMALMAP 1
+            #define _NORMAL_DROPOFF_TS 1
+            #define ATTRIBUTES_NEED_NORMAL
+            #define ATTRIBUTES_NEED_TANGENT
+            #define FEATURES_GRAPH_VERTEX_NORMAL_OUTPUT
+            #define FEATURES_GRAPH_VERTEX_TANGENT_OUTPUT
+            #define VARYINGS_NEED_NORMAL_WS
+            #define FEATURES_GRAPH_VERTEX
+            /* WARNING: $splice Could not find named fragment 'PassInstancing' */
+            #define SHADERPASS SHADERPASS_SHADOWCASTER
+            
+            
+            // custom interpolator pre-include
+            /* WARNING: $splice Could not find named fragment 'sgci_CustomInterpolatorPreInclude' */
+            
+            // Includes
+            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/TextureStack.hlsl"
+            #include_with_pragmas "Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRenderingKeywords.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRendering.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
+            
+            // --------------------------------------------------
+            // Structs and Packing
+            
+            // custom interpolators pre packing
+            /* WARNING: $splice Could not find named fragment 'CustomInterpolatorPrePacking' */
+            
+            struct Attributes
+                {
+                     float3 positionOS : POSITION;
+                     float3 normalOS : NORMAL;
+                     float4 tangentOS : TANGENT;
+                    #if UNITY_ANY_INSTANCING_ENABLED
+                     uint instanceID : INSTANCEID_SEMANTIC;
+                    #endif
+                };
+                struct Varyings
+                {
+                     float4 positionCS : SV_POSITION;
+                     float3 normalWS;
+                    #if UNITY_ANY_INSTANCING_ENABLED
+                     uint instanceID : CUSTOM_INSTANCE_ID;
+                    #endif
+                    #if (defined(UNITY_STEREO_MULTIVIEW_ENABLED)) || (defined(UNITY_STEREO_INSTANCING_ENABLED) && (defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)))
+                     uint stereoTargetEyeIndexAsBlendIdx0 : BLENDINDICES0;
+                    #endif
+                    #if (defined(UNITY_STEREO_INSTANCING_ENABLED))
+                     uint stereoTargetEyeIndexAsRTArrayIdx : SV_RenderTargetArrayIndex;
+                    #endif
+                    #if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_CULLFACE)
+                     FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
+                    #endif
+                };
+                struct SurfaceDescriptionInputs
+                {
+                };
+                struct VertexDescriptionInputs
+                {
+                     float3 ObjectSpaceNormal;
+                     float3 ObjectSpaceTangent;
+                     float3 ObjectSpacePosition;
+                };
+                struct PackedVaryings
+                {
+                     float4 positionCS : SV_POSITION;
+                     float3 normalWS : INTERP0;
+                    #if UNITY_ANY_INSTANCING_ENABLED
+                     uint instanceID : CUSTOM_INSTANCE_ID;
+                    #endif
+                    #if (defined(UNITY_STEREO_MULTIVIEW_ENABLED)) || (defined(UNITY_STEREO_INSTANCING_ENABLED) && (defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)))
+                     uint stereoTargetEyeIndexAsBlendIdx0 : BLENDINDICES0;
+                    #endif
+                    #if (defined(UNITY_STEREO_INSTANCING_ENABLED))
+                     uint stereoTargetEyeIndexAsRTArrayIdx : SV_RenderTargetArrayIndex;
+                    #endif
+                    #if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_CULLFACE)
+                     FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
+                    #endif
+                };
+            
+            PackedVaryings PackVaryings (Varyings input)
+                {
+                    PackedVaryings output;
+                    ZERO_INITIALIZE(PackedVaryings, output);
+                    output.positionCS = input.positionCS;
+                    output.normalWS.xyz = input.normalWS;
+                    #if UNITY_ANY_INSTANCING_ENABLED
+                    output.instanceID = input.instanceID;
+                    #endif
+                    #if (defined(UNITY_STEREO_MULTIVIEW_ENABLED)) || (defined(UNITY_STEREO_INSTANCING_ENABLED) && (defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)))
+                    output.stereoTargetEyeIndexAsBlendIdx0 = input.stereoTargetEyeIndexAsBlendIdx0;
+                    #endif
+                    #if (defined(UNITY_STEREO_INSTANCING_ENABLED))
+                    output.stereoTargetEyeIndexAsRTArrayIdx = input.stereoTargetEyeIndexAsRTArrayIdx;
+                    #endif
+                    #if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_CULLFACE)
+                    output.cullFace = input.cullFace;
+                    #endif
+                    return output;
+                }
+                
+                Varyings UnpackVaryings (PackedVaryings input)
+                {
+                    Varyings output;
+                    output.positionCS = input.positionCS;
+                    output.normalWS = input.normalWS.xyz;
+                    #if UNITY_ANY_INSTANCING_ENABLED
+                    output.instanceID = input.instanceID;
+                    #endif
+                    #if (defined(UNITY_STEREO_MULTIVIEW_ENABLED)) || (defined(UNITY_STEREO_INSTANCING_ENABLED) && (defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)))
+                    output.stereoTargetEyeIndexAsBlendIdx0 = input.stereoTargetEyeIndexAsBlendIdx0;
+                    #endif
+                    #if (defined(UNITY_STEREO_INSTANCING_ENABLED))
+                    output.stereoTargetEyeIndexAsRTArrayIdx = input.stereoTargetEyeIndexAsRTArrayIdx;
+                    #endif
+                    #if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_CULLFACE)
+                    output.cullFace = input.cullFace;
+                    #endif
+                    return output;
+                }
+                
+            
+            // --------------------------------------------------
+            // Graph
+            
+            // Graph Properties
+            CBUFFER_START(UnityPerMaterial)
+                float4 _BaseMap_TexelSize;
+                float4 _NormalMap_TexelSize;
+                float _Scale;
+                float _UseLighting;
+                CBUFFER_END
+                
+                
+                // Object and Global properties
+                SAMPLER(SamplerState_Linear_Repeat);
+                TEXTURE2D(_BaseMap);
+                SAMPLER(sampler_BaseMap);
+                TEXTURE2D(_NormalMap);
+                SAMPLER(sampler_NormalMap);
+            
+            // Graph Includes
+            // GraphIncludes: <None>
+            
+            // -- Property used by ScenePickingPass
+            #ifdef SCENEPICKINGPASS
+            float4 _SelectionID;
+            #endif
+            
+            // -- Properties used by SceneSelectionPass
+            #ifdef SCENESELECTIONPASS
+            int _ObjectId;
+            int _PassValue;
+            #endif
+            
+            // Graph Functions
+            // GraphFunctions: <None>
+            
+            // Custom interpolators pre vertex
+            /* WARNING: $splice Could not find named fragment 'CustomInterpolatorPreVertex' */
+            
+            // Graph Vertex
+            struct VertexDescription
+                {
+                    float3 Position;
+                    float3 Normal;
+                    float3 Tangent;
+                };
+                
+                VertexDescription VertexDescriptionFunction(VertexDescriptionInputs IN)
+                {
+                    VertexDescription description = (VertexDescription)0;
+                    description.Position = IN.ObjectSpacePosition;
+                    description.Normal = IN.ObjectSpaceNormal;
+                    description.Tangent = IN.ObjectSpaceTangent;
+                    return description;
+                }
+            
+            // Custom interpolators, pre surface
+            #ifdef FEATURES_GRAPH_VERTEX
+            Varyings CustomInterpolatorPassThroughFunc(inout Varyings output, VertexDescription input)
+            {
+            return output;
+            }
+            #define CUSTOMINTERPOLATOR_VARYPASSTHROUGH_FUNC
+            #endif
+            
+            // Graph Pixel
+            struct SurfaceDescription
+                {
+                    float Alpha;
+                    float AlphaClipThreshold;
+                };
+                
+                SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
+                {
+                    SurfaceDescription surface = (SurfaceDescription)0;
+                    surface.Alpha = 1;
+                    surface.AlphaClipThreshold = 0.5;
+                    return surface;
+                }
+            
+            // --------------------------------------------------
+            // Build Graph Inputs
+            #ifdef HAVE_VFX_MODIFICATION
+            #define VFX_SRP_ATTRIBUTES Attributes
+            #define VFX_SRP_VARYINGS Varyings
+            #define VFX_SRP_SURFACE_INPUTS SurfaceDescriptionInputs
+            #endif
+            VertexDescriptionInputs BuildVertexDescriptionInputs(Attributes input)
+                {
+                    VertexDescriptionInputs output;
+                    ZERO_INITIALIZE(VertexDescriptionInputs, output);
+                
+                    output.ObjectSpaceNormal =                          input.normalOS;
+                    output.ObjectSpaceTangent =                         input.tangentOS.xyz;
+                    output.ObjectSpacePosition =                        input.positionOS;
+                
+                    return output;
+                }
+                
+            SurfaceDescriptionInputs BuildSurfaceDescriptionInputs(Varyings input)
+                {
+                    SurfaceDescriptionInputs output;
+                    ZERO_INITIALIZE(SurfaceDescriptionInputs, output);
+                
+                #ifdef HAVE_VFX_MODIFICATION
+                #if VFX_USE_GRAPH_VALUES
+                    uint instanceActiveIndex = asuint(UNITY_ACCESS_INSTANCED_PROP(PerInstance, _InstanceActiveIndex));
+                    /* WARNING: $splice Could not find named fragment 'VFXLoadGraphValues' */
+                #endif
+                    /* WARNING: $splice Could not find named fragment 'VFXSetFragInputs' */
+                
+                #endif
+                
+                    
+                
+                
+                
+                
+                
+                
+                    #if UNITY_UV_STARTS_AT_TOP
+                    #else
+                    #endif
+                
+                
+                #if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_CULLFACE)
+                #define BUILD_SURFACE_DESCRIPTION_INPUTS_OUTPUT_FACESIGN output.FaceSign =                    IS_FRONT_VFACE(input.cullFace, true, false);
+                #else
+                #define BUILD_SURFACE_DESCRIPTION_INPUTS_OUTPUT_FACESIGN
+                #endif
+                #undef BUILD_SURFACE_DESCRIPTION_INPUTS_OUTPUT_FACESIGN
+                
+                        return output;
+                }
+                
+            
+            // --------------------------------------------------
+            // Main
+            
+            #include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/Varyings.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShadowCasterPass.hlsl"
+            
+            // --------------------------------------------------
+            // Visual Effect Vertex Invocations
+            #ifdef HAVE_VFX_MODIFICATION
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/VisualEffectVertex.hlsl"
+            #endif
+            
+            ENDHLSL
+            }
+            Pass
+            {
                 Name "MotionVectors"
                 Tags
                 {
@@ -1127,7 +1313,7 @@ Shader "Enviroment/WallPlane"
                 }
             
             // Render State
-            Cull Back
+            Cull [_Cull]
                 ZTest LEqual
                 ZWrite On
                 ColorMask RG
@@ -1147,7 +1333,7 @@ Shader "Enviroment/WallPlane"
                 #pragma fragment frag
             
             // Keywords
-            // PassKeywords: <None>
+            #pragma shader_feature_local_fragment _ _ALPHATEST_ON
             // GraphKeywords: <None>
             
             // Defines
@@ -1175,6 +1361,7 @@ Shader "Enviroment/WallPlane"
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRendering.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             
             // --------------------------------------------------
             // Structs and Packing
@@ -1334,12 +1521,14 @@ Shader "Enviroment/WallPlane"
             struct SurfaceDescription
                 {
                     float Alpha;
+                    float AlphaClipThreshold;
                 };
                 
                 SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
                 {
                     SurfaceDescription surface = (SurfaceDescription)0;
                     surface.Alpha = 1;
+                    surface.AlphaClipThreshold = 0.5;
                     return surface;
                 }
             
@@ -1413,6 +1602,314 @@ Shader "Enviroment/WallPlane"
             }
             Pass
             {
+                Name "DepthOnly"
+                Tags
+                {
+                    "LightMode" = "DepthOnly"
+                }
+            
+            // Render State
+            Cull [_Cull]
+                ZTest LEqual
+                ZWrite On
+                ColorMask R
+            
+            // Debug
+            // <None>
+            
+            // --------------------------------------------------
+            // Pass
+            
+            HLSLPROGRAM
+            
+            // Pragmas
+            #pragma target 2.0
+                #pragma multi_compile_instancing
+                #pragma vertex vert
+                #pragma fragment frag
+            
+            // Keywords
+            #pragma shader_feature_local_fragment _ _ALPHATEST_ON
+            // GraphKeywords: <None>
+            
+            // Defines
+            
+            #define _NORMALMAP 1
+            #define _NORMAL_DROPOFF_TS 1
+            #define ATTRIBUTES_NEED_NORMAL
+            #define ATTRIBUTES_NEED_TANGENT
+            #define FEATURES_GRAPH_VERTEX_NORMAL_OUTPUT
+            #define FEATURES_GRAPH_VERTEX_TANGENT_OUTPUT
+            #define FEATURES_GRAPH_VERTEX
+            /* WARNING: $splice Could not find named fragment 'PassInstancing' */
+            #define SHADERPASS SHADERPASS_DEPTHONLY
+            
+            
+            // custom interpolator pre-include
+            /* WARNING: $splice Could not find named fragment 'sgci_CustomInterpolatorPreInclude' */
+            
+            // Includes
+            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/TextureStack.hlsl"
+            #include_with_pragmas "Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRenderingKeywords.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRendering.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
+            
+            // --------------------------------------------------
+            // Structs and Packing
+            
+            // custom interpolators pre packing
+            /* WARNING: $splice Could not find named fragment 'CustomInterpolatorPrePacking' */
+            
+            struct Attributes
+                {
+                     float3 positionOS : POSITION;
+                     float3 normalOS : NORMAL;
+                     float4 tangentOS : TANGENT;
+                    #if UNITY_ANY_INSTANCING_ENABLED
+                     uint instanceID : INSTANCEID_SEMANTIC;
+                    #endif
+                };
+                struct Varyings
+                {
+                     float4 positionCS : SV_POSITION;
+                    #if UNITY_ANY_INSTANCING_ENABLED
+                     uint instanceID : CUSTOM_INSTANCE_ID;
+                    #endif
+                    #if (defined(UNITY_STEREO_MULTIVIEW_ENABLED)) || (defined(UNITY_STEREO_INSTANCING_ENABLED) && (defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)))
+                     uint stereoTargetEyeIndexAsBlendIdx0 : BLENDINDICES0;
+                    #endif
+                    #if (defined(UNITY_STEREO_INSTANCING_ENABLED))
+                     uint stereoTargetEyeIndexAsRTArrayIdx : SV_RenderTargetArrayIndex;
+                    #endif
+                    #if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_CULLFACE)
+                     FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
+                    #endif
+                };
+                struct SurfaceDescriptionInputs
+                {
+                };
+                struct VertexDescriptionInputs
+                {
+                     float3 ObjectSpaceNormal;
+                     float3 ObjectSpaceTangent;
+                     float3 ObjectSpacePosition;
+                };
+                struct PackedVaryings
+                {
+                     float4 positionCS : SV_POSITION;
+                    #if UNITY_ANY_INSTANCING_ENABLED
+                     uint instanceID : CUSTOM_INSTANCE_ID;
+                    #endif
+                    #if (defined(UNITY_STEREO_MULTIVIEW_ENABLED)) || (defined(UNITY_STEREO_INSTANCING_ENABLED) && (defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)))
+                     uint stereoTargetEyeIndexAsBlendIdx0 : BLENDINDICES0;
+                    #endif
+                    #if (defined(UNITY_STEREO_INSTANCING_ENABLED))
+                     uint stereoTargetEyeIndexAsRTArrayIdx : SV_RenderTargetArrayIndex;
+                    #endif
+                    #if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_CULLFACE)
+                     FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
+                    #endif
+                };
+            
+            PackedVaryings PackVaryings (Varyings input)
+                {
+                    PackedVaryings output;
+                    ZERO_INITIALIZE(PackedVaryings, output);
+                    output.positionCS = input.positionCS;
+                    #if UNITY_ANY_INSTANCING_ENABLED
+                    output.instanceID = input.instanceID;
+                    #endif
+                    #if (defined(UNITY_STEREO_MULTIVIEW_ENABLED)) || (defined(UNITY_STEREO_INSTANCING_ENABLED) && (defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)))
+                    output.stereoTargetEyeIndexAsBlendIdx0 = input.stereoTargetEyeIndexAsBlendIdx0;
+                    #endif
+                    #if (defined(UNITY_STEREO_INSTANCING_ENABLED))
+                    output.stereoTargetEyeIndexAsRTArrayIdx = input.stereoTargetEyeIndexAsRTArrayIdx;
+                    #endif
+                    #if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_CULLFACE)
+                    output.cullFace = input.cullFace;
+                    #endif
+                    return output;
+                }
+                
+                Varyings UnpackVaryings (PackedVaryings input)
+                {
+                    Varyings output;
+                    output.positionCS = input.positionCS;
+                    #if UNITY_ANY_INSTANCING_ENABLED
+                    output.instanceID = input.instanceID;
+                    #endif
+                    #if (defined(UNITY_STEREO_MULTIVIEW_ENABLED)) || (defined(UNITY_STEREO_INSTANCING_ENABLED) && (defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)))
+                    output.stereoTargetEyeIndexAsBlendIdx0 = input.stereoTargetEyeIndexAsBlendIdx0;
+                    #endif
+                    #if (defined(UNITY_STEREO_INSTANCING_ENABLED))
+                    output.stereoTargetEyeIndexAsRTArrayIdx = input.stereoTargetEyeIndexAsRTArrayIdx;
+                    #endif
+                    #if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_CULLFACE)
+                    output.cullFace = input.cullFace;
+                    #endif
+                    return output;
+                }
+                
+            
+            // --------------------------------------------------
+            // Graph
+            
+            // Graph Properties
+            CBUFFER_START(UnityPerMaterial)
+                float4 _BaseMap_TexelSize;
+                float4 _NormalMap_TexelSize;
+                float _Scale;
+                float _UseLighting;
+                CBUFFER_END
+                
+                
+                // Object and Global properties
+                SAMPLER(SamplerState_Linear_Repeat);
+                TEXTURE2D(_BaseMap);
+                SAMPLER(sampler_BaseMap);
+                TEXTURE2D(_NormalMap);
+                SAMPLER(sampler_NormalMap);
+            
+            // Graph Includes
+            // GraphIncludes: <None>
+            
+            // -- Property used by ScenePickingPass
+            #ifdef SCENEPICKINGPASS
+            float4 _SelectionID;
+            #endif
+            
+            // -- Properties used by SceneSelectionPass
+            #ifdef SCENESELECTIONPASS
+            int _ObjectId;
+            int _PassValue;
+            #endif
+            
+            // Graph Functions
+            // GraphFunctions: <None>
+            
+            // Custom interpolators pre vertex
+            /* WARNING: $splice Could not find named fragment 'CustomInterpolatorPreVertex' */
+            
+            // Graph Vertex
+            struct VertexDescription
+                {
+                    float3 Position;
+                    float3 Normal;
+                    float3 Tangent;
+                };
+                
+                VertexDescription VertexDescriptionFunction(VertexDescriptionInputs IN)
+                {
+                    VertexDescription description = (VertexDescription)0;
+                    description.Position = IN.ObjectSpacePosition;
+                    description.Normal = IN.ObjectSpaceNormal;
+                    description.Tangent = IN.ObjectSpaceTangent;
+                    return description;
+                }
+            
+            // Custom interpolators, pre surface
+            #ifdef FEATURES_GRAPH_VERTEX
+            Varyings CustomInterpolatorPassThroughFunc(inout Varyings output, VertexDescription input)
+            {
+            return output;
+            }
+            #define CUSTOMINTERPOLATOR_VARYPASSTHROUGH_FUNC
+            #endif
+            
+            // Graph Pixel
+            struct SurfaceDescription
+                {
+                    float Alpha;
+                    float AlphaClipThreshold;
+                };
+                
+                SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
+                {
+                    SurfaceDescription surface = (SurfaceDescription)0;
+                    surface.Alpha = 1;
+                    surface.AlphaClipThreshold = 0.5;
+                    return surface;
+                }
+            
+            // --------------------------------------------------
+            // Build Graph Inputs
+            #ifdef HAVE_VFX_MODIFICATION
+            #define VFX_SRP_ATTRIBUTES Attributes
+            #define VFX_SRP_VARYINGS Varyings
+            #define VFX_SRP_SURFACE_INPUTS SurfaceDescriptionInputs
+            #endif
+            VertexDescriptionInputs BuildVertexDescriptionInputs(Attributes input)
+                {
+                    VertexDescriptionInputs output;
+                    ZERO_INITIALIZE(VertexDescriptionInputs, output);
+                
+                    output.ObjectSpaceNormal =                          input.normalOS;
+                    output.ObjectSpaceTangent =                         input.tangentOS.xyz;
+                    output.ObjectSpacePosition =                        input.positionOS;
+                
+                    return output;
+                }
+                
+            SurfaceDescriptionInputs BuildSurfaceDescriptionInputs(Varyings input)
+                {
+                    SurfaceDescriptionInputs output;
+                    ZERO_INITIALIZE(SurfaceDescriptionInputs, output);
+                
+                #ifdef HAVE_VFX_MODIFICATION
+                #if VFX_USE_GRAPH_VALUES
+                    uint instanceActiveIndex = asuint(UNITY_ACCESS_INSTANCED_PROP(PerInstance, _InstanceActiveIndex));
+                    /* WARNING: $splice Could not find named fragment 'VFXLoadGraphValues' */
+                #endif
+                    /* WARNING: $splice Could not find named fragment 'VFXSetFragInputs' */
+                
+                #endif
+                
+                    
+                
+                
+                
+                
+                
+                
+                    #if UNITY_UV_STARTS_AT_TOP
+                    #else
+                    #endif
+                
+                
+                #if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_CULLFACE)
+                #define BUILD_SURFACE_DESCRIPTION_INPUTS_OUTPUT_FACESIGN output.FaceSign =                    IS_FRONT_VFACE(input.cullFace, true, false);
+                #else
+                #define BUILD_SURFACE_DESCRIPTION_INPUTS_OUTPUT_FACESIGN
+                #endif
+                #undef BUILD_SURFACE_DESCRIPTION_INPUTS_OUTPUT_FACESIGN
+                
+                        return output;
+                }
+                
+            
+            // --------------------------------------------------
+            // Main
+            
+            #include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/Varyings.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/DepthOnlyPass.hlsl"
+            
+            // --------------------------------------------------
+            // Visual Effect Vertex Invocations
+            #ifdef HAVE_VFX_MODIFICATION
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/VisualEffectVertex.hlsl"
+            #endif
+            
+            ENDHLSL
+            }
+            Pass
+            {
                 Name "DepthNormals"
                 Tags
                 {
@@ -1420,7 +1917,7 @@ Shader "Enviroment/WallPlane"
                 }
             
             // Render State
-            Cull Back
+            Cull [_Cull]
                 ZTest LEqual
                 ZWrite On
             
@@ -1439,7 +1936,7 @@ Shader "Enviroment/WallPlane"
                 #pragma fragment frag
             
             // Keywords
-            // PassKeywords: <None>
+            #pragma shader_feature_local_fragment _ _ALPHATEST_ON
             // GraphKeywords: <None>
             
             // Defines
@@ -1669,6 +2166,7 @@ Shader "Enviroment/WallPlane"
                 {
                     float3 NormalTS;
                     float Alpha;
+                    float AlphaClipThreshold;
                 };
                 
                 SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
@@ -1701,6 +2199,7 @@ Shader "Enviroment/WallPlane"
                     float _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_A_7_Float = _SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_RGBA_0_Vector4.a;
                     surface.NormalTS = (_SampleTexture2D_943b514227894bd5a125ab2c3995ce2a_RGBA_0_Vector4.xyz);
                     surface.Alpha = 1;
+                    surface.AlphaClipThreshold = 0.5;
                     return surface;
                 }
             
@@ -1802,6 +2301,7 @@ Shader "Enviroment/WallPlane"
             
             // Keywords
             #pragma shader_feature _ EDITOR_VISUALIZATION
+                #pragma shader_feature_local_fragment _ _ALPHATEST_ON
             // GraphKeywords: <None>
             
             // Defines
@@ -1815,8 +2315,6 @@ Shader "Enviroment/WallPlane"
             #define ATTRIBUTES_NEED_TEXCOORD2
             #define FEATURES_GRAPH_VERTEX_NORMAL_OUTPUT
             #define FEATURES_GRAPH_VERTEX_TANGENT_OUTPUT
-            #define VARYINGS_NEED_POSITION_WS
-            #define VARYINGS_NEED_NORMAL_WS
             #define VARYINGS_NEED_TEXCOORD0
             #define VARYINGS_NEED_TEXCOORD1
             #define VARYINGS_NEED_TEXCOORD2
@@ -1863,8 +2361,6 @@ Shader "Enviroment/WallPlane"
                 struct Varyings
                 {
                      float4 positionCS : SV_POSITION;
-                     float3 positionWS;
-                     float3 normalWS;
                      float4 texCoord0;
                      float4 texCoord1;
                      float4 texCoord2;
@@ -1883,8 +2379,6 @@ Shader "Enviroment/WallPlane"
                 };
                 struct SurfaceDescriptionInputs
                 {
-                     float3 WorldSpaceNormal;
-                     float3 WorldSpacePosition;
                      float4 uv0;
                 };
                 struct VertexDescriptionInputs
@@ -1899,8 +2393,6 @@ Shader "Enviroment/WallPlane"
                      float4 texCoord0 : INTERP0;
                      float4 texCoord1 : INTERP1;
                      float4 texCoord2 : INTERP2;
-                     float3 positionWS : INTERP3;
-                     float3 normalWS : INTERP4;
                     #if UNITY_ANY_INSTANCING_ENABLED
                      uint instanceID : CUSTOM_INSTANCE_ID;
                     #endif
@@ -1923,8 +2415,6 @@ Shader "Enviroment/WallPlane"
                     output.texCoord0.xyzw = input.texCoord0;
                     output.texCoord1.xyzw = input.texCoord1;
                     output.texCoord2.xyzw = input.texCoord2;
-                    output.positionWS.xyz = input.positionWS;
-                    output.normalWS.xyz = input.normalWS;
                     #if UNITY_ANY_INSTANCING_ENABLED
                     output.instanceID = input.instanceID;
                     #endif
@@ -1947,8 +2437,6 @@ Shader "Enviroment/WallPlane"
                     output.texCoord0 = input.texCoord0.xyzw;
                     output.texCoord1 = input.texCoord1.xyzw;
                     output.texCoord2 = input.texCoord2.xyzw;
-                    output.positionWS = input.positionWS.xyz;
-                    output.normalWS = input.normalWS.xyz;
                     #if UNITY_ANY_INSTANCING_ENABLED
                     output.instanceID = input.instanceID;
                     #endif
@@ -1985,7 +2473,7 @@ Shader "Enviroment/WallPlane"
                 SAMPLER(sampler_NormalMap);
             
             // Graph Includes
-            #include "Assets/Shaders/LightingBreakdown.hlsl"
+            // GraphIncludes: <None>
             
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
@@ -2000,64 +2488,6 @@ Shader "Enviroment/WallPlane"
             
             // Graph Functions
             
-                void Unity_DotProduct_float3(float3 A, float3 B, out float Out)
-                {
-                    Out = dot(A, B);
-                }
-                
-                void Unity_Saturate_float(float In, out float Out)
-                {
-                    Out = saturate(In);
-                }
-                
-                void Unity_Multiply_half_half(half A, half B, out half Out)
-                {
-                Out = A * B;
-                }
-                
-                void Unity_Multiply_float3_float3(float3 A, float3 B, out float3 Out)
-                {
-                Out = A * B;
-                }
-                
-                void Unity_Multiply_half3_half3(half3 A, half3 B, out half3 Out)
-                {
-                Out = A * B;
-                }
-                
-                void Unity_Add_float3(float3 A, float3 B, out float3 Out)
-                {
-                    Out = A + B;
-                }
-                
-                struct Bindings_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float
-                {
-                float3 WorldSpaceNormal;
-                float3 WorldSpacePosition;
-                };
-                
-                void SG_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float(Bindings_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float IN, out float3 Lighting_1)
-                {
-                half3 _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Direction_1_Vector3;
-                half3 _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Color_2_Vector3;
-                half _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_DistanceAtten_3_Float;
-                half _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_ShadowAtten_4_Float;
-                MainLight_half(IN.WorldSpacePosition, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Direction_1_Vector3, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Color_2_Vector3, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_DistanceAtten_3_Float, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_ShadowAtten_4_Float);
-                float _DotProduct_d09cbd5d5aac49d586df4da8c3a657ca_Out_2_Float;
-                Unity_DotProduct_float3(IN.WorldSpaceNormal, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Direction_1_Vector3, _DotProduct_d09cbd5d5aac49d586df4da8c3a657ca_Out_2_Float);
-                float _Saturate_82b3a3038bef44dcb5b293d653776a20_Out_1_Float;
-                Unity_Saturate_float(_DotProduct_d09cbd5d5aac49d586df4da8c3a657ca_Out_2_Float, _Saturate_82b3a3038bef44dcb5b293d653776a20_Out_1_Float);
-                half _Multiply_1c4d47a89fbb49e0a854aa216ee6b691_Out_2_Float;
-                Unity_Multiply_half_half(_MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_DistanceAtten_3_Float, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_ShadowAtten_4_Float, _Multiply_1c4d47a89fbb49e0a854aa216ee6b691_Out_2_Float);
-                half3 _Multiply_ecb8128c4bfd4e25a82765350c71a764_Out_2_Vector3;
-                Unity_Multiply_half3_half3(_MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Color_2_Vector3, (_Multiply_1c4d47a89fbb49e0a854aa216ee6b691_Out_2_Float.xxx), _Multiply_ecb8128c4bfd4e25a82765350c71a764_Out_2_Vector3);
-                float3 _Multiply_be8b0ec1ebb24d1da3ebc9123c665841_Out_2_Vector3;
-                Unity_Multiply_float3_float3((_Saturate_82b3a3038bef44dcb5b293d653776a20_Out_1_Float.xxx), _Multiply_ecb8128c4bfd4e25a82765350c71a764_Out_2_Vector3, _Multiply_be8b0ec1ebb24d1da3ebc9123c665841_Out_2_Vector3);
-                float3 _Add_0575b3b615c646bebd5df45654b43d79_Out_2_Vector3;
-                Unity_Add_float3(SHADERGRAPH_AMBIENT_SKY, _Multiply_be8b0ec1ebb24d1da3ebc9123c665841_Out_2_Vector3, _Add_0575b3b615c646bebd5df45654b43d79_Out_2_Vector3);
-                Lighting_1 = _Add_0575b3b615c646bebd5df45654b43d79_Out_2_Vector3;
-                }
-                
                 void Unity_Multiply_float_float(float A, float B, out float Out)
                 {
                     Out = A * B;
@@ -2066,11 +2496,6 @@ Shader "Enviroment/WallPlane"
                 void Unity_TilingAndOffset_float(float2 UV, float2 Tiling, float2 Offset, out float2 Out)
                 {
                     Out = UV * Tiling + Offset;
-                }
-                
-                void Unity_Branch_float3(float Predicate, float3 True, float3 False, out float3 Out)
-                {
-                    Out = Predicate ? True : False;
                 }
             
             // Custom interpolators pre vertex
@@ -2108,17 +2533,12 @@ Shader "Enviroment/WallPlane"
                     float3 BaseColor;
                     float3 Emission;
                     float Alpha;
+                    float AlphaClipThreshold;
                 };
                 
                 SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
                 {
                     SurfaceDescription surface = (SurfaceDescription)0;
-                    float _Property_a0bbd5a4841c4d8fb40b661d55284a04_Out_0_Boolean = _UseLighting;
-                    Bindings_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4;
-                    _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4.WorldSpaceNormal = IN.WorldSpaceNormal;
-                    _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4.WorldSpacePosition = IN.WorldSpacePosition;
-                    float3 _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4_Lighting_1_Vector3;
-                    SG_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float(_var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4, _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4_Lighting_1_Vector3);
                     UnityTexture2D _Property_9257dd9d985242c584e82e1b9c414df2_Out_0_Texture2D = UnityBuildTexture2DStructNoScale(_BaseMap);
                     float _Split_8f3ad494e0004074b9d5a8202ee9e79c_R_1_Float = float3(length(float3(UNITY_MATRIX_M[0].x, UNITY_MATRIX_M[1].x, UNITY_MATRIX_M[2].x)),
                                              length(float3(UNITY_MATRIX_M[0].y, UNITY_MATRIX_M[1].y, UNITY_MATRIX_M[2].y)),
@@ -2143,13 +2563,10 @@ Shader "Enviroment/WallPlane"
                     float _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_G_5_Float = _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.g;
                     float _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_B_6_Float = _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.b;
                     float _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_A_7_Float = _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.a;
-                    float3 _Multiply_a341bbd2964348f9a4279cc0e1023de3_Out_2_Vector3;
-                    Unity_Multiply_float3_float3(_var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4_Lighting_1_Vector3, (_SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.xyz), _Multiply_a341bbd2964348f9a4279cc0e1023de3_Out_2_Vector3);
-                    float3 _Branch_9d8cf166532e42a3b26a613f0a973878_Out_3_Vector3;
-                    Unity_Branch_float3(_Property_a0bbd5a4841c4d8fb40b661d55284a04_Out_0_Boolean, _Multiply_a341bbd2964348f9a4279cc0e1023de3_Out_2_Vector3, (_SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.xyz), _Branch_9d8cf166532e42a3b26a613f0a973878_Out_3_Vector3);
-                    surface.BaseColor = _Branch_9d8cf166532e42a3b26a613f0a973878_Out_3_Vector3;
+                    surface.BaseColor = (_SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.xyz);
                     surface.Emission = float3(0, 0, 0);
                     surface.Alpha = 1;
+                    surface.AlphaClipThreshold = 0.5;
                     return surface;
                 }
             
@@ -2188,15 +2605,10 @@ Shader "Enviroment/WallPlane"
                 
                     
                 
-                    // must use interpolated tangent, bitangent and normal before they are normalized in the pixel shader.
-                    float3 unnormalizedNormalWS = input.normalWS;
-                    const float renormFactor = 1.0 / length(unnormalizedNormalWS);
                 
                 
-                    output.WorldSpaceNormal = renormFactor * input.normalWS.xyz;      // we want a unit length Normal Vector node in shader graph
                 
                 
-                    output.WorldSpacePosition = input.positionWS;
                 
                     #if UNITY_UV_STARTS_AT_TOP
                     #else
@@ -2254,7 +2666,7 @@ Shader "Enviroment/WallPlane"
                 #pragma fragment frag
             
             // Keywords
-            // PassKeywords: <None>
+            #pragma shader_feature_local_fragment _ _ALPHATEST_ON
             // GraphKeywords: <None>
             
             // Defines
@@ -2454,12 +2866,14 @@ Shader "Enviroment/WallPlane"
             struct SurfaceDescription
                 {
                     float Alpha;
+                    float AlphaClipThreshold;
                 };
                 
                 SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
                 {
                     SurfaceDescription surface = (SurfaceDescription)0;
                     surface.Alpha = 1;
+                    surface.AlphaClipThreshold = 0.5;
                     return surface;
                 }
             
@@ -2542,7 +2956,7 @@ Shader "Enviroment/WallPlane"
                 }
             
             // Render State
-            Cull Back
+            Cull [_Cull]
             
             // Debug
             // <None>
@@ -2558,7 +2972,7 @@ Shader "Enviroment/WallPlane"
                 #pragma fragment frag
             
             // Keywords
-            // PassKeywords: <None>
+            #pragma shader_feature_local_fragment _ _ALPHATEST_ON
             // GraphKeywords: <None>
             
             // Defines
@@ -2758,12 +3172,14 @@ Shader "Enviroment/WallPlane"
             struct SurfaceDescription
                 {
                     float Alpha;
+                    float AlphaClipThreshold;
                 };
                 
                 SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
                 {
                     SurfaceDescription surface = (SurfaceDescription)0;
                     surface.Alpha = 1;
+                    surface.AlphaClipThreshold = 0.5;
                     return surface;
                 }
             
@@ -2846,10 +3262,10 @@ Shader "Enviroment/WallPlane"
                 }
             
             // Render State
-            Cull Back
-                Blend SrcAlpha OneMinusSrcAlpha, One OneMinusSrcAlpha
-                ZTest LEqual
-                ZWrite Off
+            Cull [_Cull]
+                Blend [_SrcBlend] [_DstBlend]
+                ZTest [_ZTest]
+                ZWrite [_ZWrite]
             
             // Debug
             // <None>
@@ -2865,7 +3281,7 @@ Shader "Enviroment/WallPlane"
                 #pragma fragment frag
             
             // Keywords
-            // PassKeywords: <None>
+            #pragma shader_feature_local_fragment _ _ALPHATEST_ON
             // GraphKeywords: <None>
             
             // Defines
@@ -2877,8 +3293,6 @@ Shader "Enviroment/WallPlane"
             #define ATTRIBUTES_NEED_TEXCOORD0
             #define FEATURES_GRAPH_VERTEX_NORMAL_OUTPUT
             #define FEATURES_GRAPH_VERTEX_TANGENT_OUTPUT
-            #define VARYINGS_NEED_POSITION_WS
-            #define VARYINGS_NEED_NORMAL_WS
             #define VARYINGS_NEED_TEXCOORD0
             #define FEATURES_GRAPH_VERTEX
             /* WARNING: $splice Could not find named fragment 'PassInstancing' */
@@ -2919,8 +3333,6 @@ Shader "Enviroment/WallPlane"
                 struct Varyings
                 {
                      float4 positionCS : SV_POSITION;
-                     float3 positionWS;
-                     float3 normalWS;
                      float4 texCoord0;
                     #if UNITY_ANY_INSTANCING_ENABLED
                      uint instanceID : CUSTOM_INSTANCE_ID;
@@ -2937,8 +3349,6 @@ Shader "Enviroment/WallPlane"
                 };
                 struct SurfaceDescriptionInputs
                 {
-                     float3 WorldSpaceNormal;
-                     float3 WorldSpacePosition;
                      float4 uv0;
                 };
                 struct VertexDescriptionInputs
@@ -2951,8 +3361,6 @@ Shader "Enviroment/WallPlane"
                 {
                      float4 positionCS : SV_POSITION;
                      float4 texCoord0 : INTERP0;
-                     float3 positionWS : INTERP1;
-                     float3 normalWS : INTERP2;
                     #if UNITY_ANY_INSTANCING_ENABLED
                      uint instanceID : CUSTOM_INSTANCE_ID;
                     #endif
@@ -2973,8 +3381,6 @@ Shader "Enviroment/WallPlane"
                     ZERO_INITIALIZE(PackedVaryings, output);
                     output.positionCS = input.positionCS;
                     output.texCoord0.xyzw = input.texCoord0;
-                    output.positionWS.xyz = input.positionWS;
-                    output.normalWS.xyz = input.normalWS;
                     #if UNITY_ANY_INSTANCING_ENABLED
                     output.instanceID = input.instanceID;
                     #endif
@@ -2995,8 +3401,6 @@ Shader "Enviroment/WallPlane"
                     Varyings output;
                     output.positionCS = input.positionCS;
                     output.texCoord0 = input.texCoord0.xyzw;
-                    output.positionWS = input.positionWS.xyz;
-                    output.normalWS = input.normalWS.xyz;
                     #if UNITY_ANY_INSTANCING_ENABLED
                     output.instanceID = input.instanceID;
                     #endif
@@ -3033,7 +3437,7 @@ Shader "Enviroment/WallPlane"
                 SAMPLER(sampler_NormalMap);
             
             // Graph Includes
-            #include "Assets/Shaders/LightingBreakdown.hlsl"
+            // GraphIncludes: <None>
             
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
@@ -3048,64 +3452,6 @@ Shader "Enviroment/WallPlane"
             
             // Graph Functions
             
-                void Unity_DotProduct_float3(float3 A, float3 B, out float Out)
-                {
-                    Out = dot(A, B);
-                }
-                
-                void Unity_Saturate_float(float In, out float Out)
-                {
-                    Out = saturate(In);
-                }
-                
-                void Unity_Multiply_half_half(half A, half B, out half Out)
-                {
-                Out = A * B;
-                }
-                
-                void Unity_Multiply_float3_float3(float3 A, float3 B, out float3 Out)
-                {
-                Out = A * B;
-                }
-                
-                void Unity_Multiply_half3_half3(half3 A, half3 B, out half3 Out)
-                {
-                Out = A * B;
-                }
-                
-                void Unity_Add_float3(float3 A, float3 B, out float3 Out)
-                {
-                    Out = A + B;
-                }
-                
-                struct Bindings_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float
-                {
-                float3 WorldSpaceNormal;
-                float3 WorldSpacePosition;
-                };
-                
-                void SG_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float(Bindings_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float IN, out float3 Lighting_1)
-                {
-                half3 _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Direction_1_Vector3;
-                half3 _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Color_2_Vector3;
-                half _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_DistanceAtten_3_Float;
-                half _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_ShadowAtten_4_Float;
-                MainLight_half(IN.WorldSpacePosition, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Direction_1_Vector3, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Color_2_Vector3, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_DistanceAtten_3_Float, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_ShadowAtten_4_Float);
-                float _DotProduct_d09cbd5d5aac49d586df4da8c3a657ca_Out_2_Float;
-                Unity_DotProduct_float3(IN.WorldSpaceNormal, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Direction_1_Vector3, _DotProduct_d09cbd5d5aac49d586df4da8c3a657ca_Out_2_Float);
-                float _Saturate_82b3a3038bef44dcb5b293d653776a20_Out_1_Float;
-                Unity_Saturate_float(_DotProduct_d09cbd5d5aac49d586df4da8c3a657ca_Out_2_Float, _Saturate_82b3a3038bef44dcb5b293d653776a20_Out_1_Float);
-                half _Multiply_1c4d47a89fbb49e0a854aa216ee6b691_Out_2_Float;
-                Unity_Multiply_half_half(_MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_DistanceAtten_3_Float, _MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_ShadowAtten_4_Float, _Multiply_1c4d47a89fbb49e0a854aa216ee6b691_Out_2_Float);
-                half3 _Multiply_ecb8128c4bfd4e25a82765350c71a764_Out_2_Vector3;
-                Unity_Multiply_half3_half3(_MainLightCustomFunction_bf337aaffe964b74829caa67239cd1eb_Color_2_Vector3, (_Multiply_1c4d47a89fbb49e0a854aa216ee6b691_Out_2_Float.xxx), _Multiply_ecb8128c4bfd4e25a82765350c71a764_Out_2_Vector3);
-                float3 _Multiply_be8b0ec1ebb24d1da3ebc9123c665841_Out_2_Vector3;
-                Unity_Multiply_float3_float3((_Saturate_82b3a3038bef44dcb5b293d653776a20_Out_1_Float.xxx), _Multiply_ecb8128c4bfd4e25a82765350c71a764_Out_2_Vector3, _Multiply_be8b0ec1ebb24d1da3ebc9123c665841_Out_2_Vector3);
-                float3 _Add_0575b3b615c646bebd5df45654b43d79_Out_2_Vector3;
-                Unity_Add_float3(SHADERGRAPH_AMBIENT_SKY, _Multiply_be8b0ec1ebb24d1da3ebc9123c665841_Out_2_Vector3, _Add_0575b3b615c646bebd5df45654b43d79_Out_2_Vector3);
-                Lighting_1 = _Add_0575b3b615c646bebd5df45654b43d79_Out_2_Vector3;
-                }
-                
                 void Unity_Multiply_float_float(float A, float B, out float Out)
                 {
                     Out = A * B;
@@ -3114,11 +3460,6 @@ Shader "Enviroment/WallPlane"
                 void Unity_TilingAndOffset_float(float2 UV, float2 Tiling, float2 Offset, out float2 Out)
                 {
                     Out = UV * Tiling + Offset;
-                }
-                
-                void Unity_Branch_float3(float Predicate, float3 True, float3 False, out float3 Out)
-                {
-                    Out = Predicate ? True : False;
                 }
             
             // Custom interpolators pre vertex
@@ -3155,17 +3496,12 @@ Shader "Enviroment/WallPlane"
                 {
                     float3 BaseColor;
                     float Alpha;
+                    float AlphaClipThreshold;
                 };
                 
                 SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
                 {
                     SurfaceDescription surface = (SurfaceDescription)0;
-                    float _Property_a0bbd5a4841c4d8fb40b661d55284a04_Out_0_Boolean = _UseLighting;
-                    Bindings_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4;
-                    _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4.WorldSpaceNormal = IN.WorldSpaceNormal;
-                    _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4.WorldSpacePosition = IN.WorldSpacePosition;
-                    float3 _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4_Lighting_1_Vector3;
-                    SG_var8bitGetLight_93ab45f0c9d8c45a8b110ec8efe22d7d_float(_var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4, _var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4_Lighting_1_Vector3);
                     UnityTexture2D _Property_9257dd9d985242c584e82e1b9c414df2_Out_0_Texture2D = UnityBuildTexture2DStructNoScale(_BaseMap);
                     float _Split_8f3ad494e0004074b9d5a8202ee9e79c_R_1_Float = float3(length(float3(UNITY_MATRIX_M[0].x, UNITY_MATRIX_M[1].x, UNITY_MATRIX_M[2].x)),
                                              length(float3(UNITY_MATRIX_M[0].y, UNITY_MATRIX_M[1].y, UNITY_MATRIX_M[2].y)),
@@ -3190,12 +3526,9 @@ Shader "Enviroment/WallPlane"
                     float _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_G_5_Float = _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.g;
                     float _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_B_6_Float = _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.b;
                     float _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_A_7_Float = _SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.a;
-                    float3 _Multiply_a341bbd2964348f9a4279cc0e1023de3_Out_2_Vector3;
-                    Unity_Multiply_float3_float3(_var8bitGetLight_21e6350e49984c7e91f61c048d6dd1c4_Lighting_1_Vector3, (_SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.xyz), _Multiply_a341bbd2964348f9a4279cc0e1023de3_Out_2_Vector3);
-                    float3 _Branch_9d8cf166532e42a3b26a613f0a973878_Out_3_Vector3;
-                    Unity_Branch_float3(_Property_a0bbd5a4841c4d8fb40b661d55284a04_Out_0_Boolean, _Multiply_a341bbd2964348f9a4279cc0e1023de3_Out_2_Vector3, (_SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.xyz), _Branch_9d8cf166532e42a3b26a613f0a973878_Out_3_Vector3);
-                    surface.BaseColor = _Branch_9d8cf166532e42a3b26a613f0a973878_Out_3_Vector3;
+                    surface.BaseColor = (_SampleTexture2D_ee9fd5aa0eeb4b2994f9dfced2ecc1af_RGBA_0_Vector4.xyz);
                     surface.Alpha = 1;
+                    surface.AlphaClipThreshold = 0.5;
                     return surface;
                 }
             
@@ -3234,15 +3567,10 @@ Shader "Enviroment/WallPlane"
                 
                     
                 
-                    // must use interpolated tangent, bitangent and normal before they are normalized in the pixel shader.
-                    float3 unnormalizedNormalWS = input.normalWS;
-                    const float renormFactor = 1.0 / length(unnormalizedNormalWS);
                 
                 
-                    output.WorldSpaceNormal = renormFactor * input.normalWS.xyz;      // we want a unit length Normal Vector node in shader graph
                 
                 
-                    output.WorldSpacePosition = input.positionWS;
                 
                     #if UNITY_UV_STARTS_AT_TOP
                     #else

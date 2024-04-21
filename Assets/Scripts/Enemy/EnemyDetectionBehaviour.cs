@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Entities.UI;
@@ -19,7 +20,9 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     public float attackRange = 1.2f;
     public float attackCD = 1.5f;
 
-    [SerializeField] bool isDemageProcess;
+    [SerializeField]
+    bool isDemageProcess;
+
     float _demageProcessTime = 1.5f; // lock demage process time
     //
     // public bool inDefense;
@@ -56,17 +59,17 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     public bool faceDirection => (this.target.x - this.transform.position.x) > 0;
 
     Coroutine _currentCoroutine;
-    
+
     // body collider
     private void OnCollisionEnter(Collision collision)
     {
         // Check if the enemy collided with the player
-        if (collision.gameObject.CompareTag( "Player") && this.inAttack)
+        if (collision.gameObject.CompareTag("Player") && this.inAttack)
         {
             // Deal damage to the player
             // ...
         }
-        else if (collision.gameObject.CompareTag( "AttackHitbox") )
+        else if (collision.gameObject.CompareTag("AttackHitbox"))
         {
             // Deal damage to the enemy
             // ...
@@ -99,11 +102,20 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         this.target = this.transform.position;
         // this.lookingRay = new Ray(this.transform.position, this.transform.forward);
         this._currentCoroutine = this.StartCoroutine("CoroutineUpdate");
+        GameStateManager.Instance.OnGameStateChanged += this.OnGameStateChanged;
+
+    }
+    
+
+    public void OnDestroy()
+    {
+        GameStateManager.Instance.OnGameStateChanged -= this.OnGameStateChanged;
     }
 
     // call this method in the Implement FixedUpdate
     public virtual void onUpdate()
     {
+        
         if (this.isPaused == false)
         {
             this.Move(Time.fixedDeltaTime);
@@ -129,13 +141,15 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
             {
                 yield return new WaitUntil(() => this.isPaused == false);
             }
+
             yield return new WaitForSeconds(this.updateRate);
         }
     }
-    
-    public void onGameStateChanged(GameState newGameState)
+
+    public void OnGameStateChanged(GameState newGameState)
     {
         this.isPaused = newGameState == GameState.Paused || newGameState == GameState.GameOver;
+        Debug.Log("should update " + this.isPaused);
     }
 
     public virtual void DetectPlayer(float timeChange)
@@ -154,14 +168,13 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
             foreach (RaycastHit hitted in this._lookingRaycastHits)
             {
-                if (!hitted.collider)  continue;
+                if (!hitted.collider) continue;
                 if (hitted.collider.gameObject && hitted.collider.gameObject == playerGO)
                 {
                     this.isPlayerDetected = true;
                     this.attentionTimer = this.attentionTimeout;
                     this.CheckInAttackRage();
                 }
-                        
             }
         }
         else
@@ -186,21 +199,22 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     public virtual IEnumerator CausalBehaviour()
     {
         int randomPointIndex = Random.Range(0, this.patrolPoints.Count);
+        var pos = this.patrolPoints[randomPointIndex].position;
         var randomPoint = new Vector3(
-            this.patrolPoints[randomPointIndex].position.x,
+            pos.x,
             this.transform.position.y,
-            this.patrolPoints[randomPointIndex].position.z
+            pos.z
         );
         this.target = randomPoint;
         yield return new WaitForSeconds(this.updateRate * 0.3f);
-    }   
+    }
+
     public virtual void UpdateTarget()
     {
         this.target = GameObject.FindGameObjectWithTag("Player").transform.position;
         this.target.y = this.transform.position.y; // Keep the enemy at the same height as the player
     }
-    
-    
+
 
     public virtual IEnumerator Attack()
     {
@@ -210,6 +224,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         yield return new WaitForSeconds(this.updateRate + this.attackCD);
         this.ResetAfterAttack();
     }
+
     public void ResetAfterAttack()
     {
         this.inAttack = false;
@@ -231,25 +246,23 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     {
         Debug.Log("get damage");
         if (this.isDemageProcess) return;
-        
+
         this.health -= damage;
         this.isDemageProcess = true;
         StopCoroutine(this._currentCoroutine);
         this._currentCoroutine = StartCoroutine("TakeDamageAnimation");
-        // }
-        // Play damage animation
-        // Take damage from the player
-        if (this.health <= 0)
-            StartCoroutine( "Die");
 
+        if (this.health <= 0)
+            StartCoroutine("Die");
     }
 
     public virtual IEnumerator TakeDamageAnimation()
-    { 
+    {
         // Debug.Log("get damage animation");
         yield return new WaitForSeconds(this.updateRate + this._demageProcessTime);
         ResetAfterDemage();
     }
+
     public void ResetAfterDemage()
     {
         this.isDemageProcess = false;
@@ -261,9 +274,9 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         StartCoroutine("DieAnimation");
         Destroy(this.gameObject);
     }
-    
+
     public virtual IEnumerator DieAnimation()
-    {   
+    {
         yield return null;
         // this.isPaused = tru  e;
     }
@@ -299,14 +312,18 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     {
         // Rotate the enemy towards the player
         // ...
-        this._planeRenderer.material.SetInt(PlaneRendererIsFlip, faceDirection ? 1 : 0);
+        this._planeRenderer.material.SetInt(PlaneRendererIsFlip, faceDirection
+            ? 1
+            : 0);
     }
 
     public virtual void CheckAttack()
     {
         // Check if the enemy is in range to attack the player
         // ...
-        this._planeRenderer.material.SetInt(PlaneRendererIsAttack, this.inAttackRange?1:0);
+        this._planeRenderer.material.SetInt(PlaneRendererIsAttack, this.inAttackRange
+            ? 1
+            : 0);
     }
 
     public virtual void AddStatusEffect()
