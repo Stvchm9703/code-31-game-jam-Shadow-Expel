@@ -32,18 +32,17 @@ public class Mon001EnemyDetectBehaviour : IEnemyDetectBehaviour
         // Play the attack animation
         // ...
         // fake preattack animation 
-        yield return new WaitForSeconds(1.25f);
-        plane.SetActive(false);
+        yield return new WaitForSeconds(1.2f);
         if (attackPlane)
         {   
+            plane.SetActive(false);
             this._attackPlaneRenderer.material.SetInt(AttackPlaneRenderIsFlip, faceDirection? 1 : 0);
             attackPlane.SetActive(true);
+            yield return new WaitForSeconds(this.attackCD);
+            plane.SetActive(true);
+            attackPlane.SetActive(false);
         }
-        yield return new WaitForSeconds(this.attackCD);
-        // Deal damage to the player
-        // ...
-        plane.SetActive(true);
-        attackPlane.SetActive(false);
+        this.PlayAttackSFX();      
         this.ResetAfterAttack();
     }
     

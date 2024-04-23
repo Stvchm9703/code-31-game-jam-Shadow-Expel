@@ -333,5 +333,14 @@ MonoBehaviour:
   detectionLayer:
     serializedVersion: 2
     m_Bits: 768
+  _attackSound:
+  - {fileID: 8300000, guid: 5a7f505647c8e46aeb35e069053e221d, type: 3}
+  - {fileID: 8300000, guid: 9feb87d6076f34bd58581d11f85c392f, type: 3}
+  _demageSound:
+  - {fileID: 0}
+  _dieSound:
+  - {fileID: 8300000, guid: 1104ede35bb3d42b1861cedca948dcbf, type: 3}
+  _idleSound:
+  - {fileID: 8300000, guid: 81c90a3b11e214192bc34f9b1e5b2997, type: 3}
   attackPlane: {fileID: 4723159045283505926}
   attackSkin: {fileID: 2800000, guid: 11d3209b8263546d5aa2592c5906c3b9, type: 3}

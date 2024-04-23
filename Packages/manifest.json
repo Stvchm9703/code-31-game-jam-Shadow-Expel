@@ -2,6 +2,7 @@
   "dependencies": {
     "com.annulusgames.entities-events": "https://github.com/AnnulusGames/EntitiesEvents.git?path=Assets/EntitiesEvents",
     "com.esotericsoftware.spine.urp-shaders": "https://github.com/EsotericSoftware/spine-runtimes.git?path=spine-unity/Modules/com.esotericsoftware.spine.urp-shaders#4.1",
+    "com.inspiaaa.unityhfsm": "https://github.com/Inspiaaa/UnityHFSM.git#upm",
     "com.kyrylokuzyk.primetween": "file:../Assets/Plugins/PrimeTween/internal/com.kyrylokuzyk.primetween.tgz",
     "com.peturdarri.generic-event-bus": "0.1.2",
     "com.unity.2d.animation": "10.1.1",

@@ -59,7 +59,9 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     public bool faceDirection => (this.target.x - this.transform.position.x) > 0;
 
     Coroutine _currentCoroutine;
-
+    
+    [SerializeField] private List<AudioClip> _attackSound , _demageSound, _dieSound, _idleSound;
+    // AudioSource _audioSource;
     // body collider
     private void OnCollisionEnter(Collision collision)
     {
@@ -122,6 +124,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
             this.DetectPlayer(Time.fixedDeltaTime);
             this.CheckAttack();
             // Debug.DrawRay(this.lookingRay.origin, this.lookingRay.direction * this.detectionRange, Color.red);
+            
         }
     }
 
@@ -129,7 +132,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     {
         while (true)
         {
-            Debug.Log("CoroutineUpdate");
+            // Debug.Log("CoroutineUpdate");
             if (this.isPaused == false)
             {
                 if (!this.isPlayerDetected)
@@ -141,7 +144,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
             {
                 yield return new WaitUntil(() => this.isPaused == false);
             }
-
+    
             yield return new WaitForSeconds(this.updateRate);
         }
     }
@@ -149,7 +152,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     public void OnGameStateChanged(GameState newGameState)
     {
         this.isPaused = newGameState == GameState.Paused || newGameState == GameState.GameOver;
-        Debug.Log("should update " + this.isPaused);
+        // Debug.Log("should update " + this.isPaused);
     }
 
     public virtual void DetectPlayer(float timeChange)
@@ -206,9 +209,15 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
             pos.z
         );
         this.target = randomPoint;
+        PlayIdleSound();
         yield return new WaitForSeconds(this.updateRate * 0.3f);
     }
-
+    public void PlayIdleSound()
+    {
+        // Play idle sound
+        var randomIndex = Random.Range(0, this._idleSound.Count);
+        SoundFXManager.Instance.PlaySoundFX(this._idleSound[randomIndex], this.transform, 0.25f, this.updateRate * 0.3f);
+    }
     public virtual void UpdateTarget()
     {
         this.target = GameObject.FindGameObjectWithTag("Player").transform.position;
@@ -221,6 +230,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         // Debug.Log("Attack Phase");
         // Attack the player
         // ...
+        PlayAttackSFX();
         yield return new WaitForSeconds(this.updateRate + this.attackCD);
         this.ResetAfterAttack();
     }
@@ -232,6 +242,13 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         this._currentCoroutine = this.StartCoroutine("CoroutineUpdate");
     }
 
+    public void PlayAttackSFX()
+    {
+        // Play attack animation
+        var randomIndex = Random.Range(0, this._attackSound.Count);
+        SoundFXManager.Instance.PlaySoundFX(this._attackSound[randomIndex], this.transform);
+    }
+    
     // public virtual IEnumerator Defend()
     // {
     //     // Defend against the player's attack
@@ -258,13 +275,22 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public virtual IEnumerator TakeDamageAnimation()
     {
-        // Debug.Log("get damage animation");
+        Debug.Log("get damage animation");
+        this.PlayTakeDemageSFX();
         yield return new WaitForSeconds(this.updateRate + this._demageProcessTime);
         ResetAfterDemage();
     }
 
+    public void PlayTakeDemageSFX()
+    {
+        // Play damage animation
+        var randomIndex = Random.Range(0, this._demageSound.Count);
+        SoundFXManager.Instance.PlaySoundFX(this._demageSound[randomIndex], this.transform);
+    }
+
     public void ResetAfterDemage()
     {
+        Debug.Log("reset demage process");
         this.isDemageProcess = false;
         this._currentCoroutine = this.StartCoroutine("CoroutineUpdate");
     }
@@ -277,8 +303,16 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public virtual IEnumerator DieAnimation()
     {
-        yield return null;
+        Debug.Log("Die animation");
+        // Play damage animation
+        this.PlayDieSound();
+        yield return new WaitForSeconds(1f);
         // this.isPaused = tru  e;
+    }
+    public virtual void PlayDieSound()
+    {
+        var randomIndex = Random.Range(0, this._dieSound.Count);
+        SoundFXManager.Instance.PlaySoundFX(this._dieSound[randomIndex], this.transform);
     }
 
     public virtual void Move(float time)

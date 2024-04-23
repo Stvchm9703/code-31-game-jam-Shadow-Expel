@@ -207,6 +207,10 @@ public class PlayerMoveInputController : MonoBehaviour
         }
 
         if (!this.isDashing && this.dashGasCount < this.maxDashGasCount) this.dashGasCount += deltaTime;
+        
+        Tween.LocalRotation(this._lightTransform, new Vector3(0, -this._rawFacingAngle, 0), 0.5f);
+        this._spotLightRay.direction = Quaternion.Euler(0, -this._rawFacingAngle, 0) * this.transform.forward * this.spotLightRange;
+
     }
 
     public void onMove(InputAction.CallbackContext context)
@@ -221,6 +225,7 @@ public class PlayerMoveInputController : MonoBehaviour
             this.playerState = PlayerState.Idle;
         else
             this.playerState = PlayerState.Move;
+        
         this.UpdateAnimation();
 
     }
@@ -311,8 +316,6 @@ public class PlayerMoveInputController : MonoBehaviour
 
         // Tween.LocalPosition(this._lightTransform, new Vector3(ctx.x, this._lightTransform.localPosition.y, ctx.y), 0.5f);
         _rawFacingAngle = Mathf.Rad2Deg * angle;
-        Tween.LocalRotation(this._lightTransform, new Vector3(0, angle * -Mathf.Rad2Deg, 0), 0.5f);
-        this._spotLightRay.direction = Quaternion.Euler(0, angle * -Mathf.Rad2Deg + 90, 0) * this.transform.forward * this.spotLightRange;
         UpdateAnimation();
     }
 

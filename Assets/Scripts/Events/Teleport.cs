@@ -11,6 +11,9 @@ public class Teleport : MonoBehaviour
     public BoxCollider cameraBounds;
     public CinemachineConfiner cameraConfiner;
     GameObject player;
+    
+    public delegate void TeleportAction();
+    public event TeleportAction OnTeleports;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +27,8 @@ public class Teleport : MonoBehaviour
         {
             player.transform.position = target.position;
             cameraConfiner.m_BoundingVolume = cameraBounds;
+            
+            OnTeleports?.Invoke();
         }
     }
 }
