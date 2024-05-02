@@ -66,6 +66,9 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     // body collider
 
     StateMachine _stateMachine;
+    
+    [SerializeField] 
+    public string State => this._stateMachine.ActiveState.ToString();
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -129,7 +132,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         this._stateMachine.AddState("Attack", new CoState(this, this.Attack, loop: false));
         this._stateMachine.AddState("Detected", new CoState(this, this.ChasePlayer, loop: true));
         this._stateMachine.AddState("TakeDemage", new CoState(this, this.TakeDamageAnimation, loop: false));
-        this._stateMachine.AddState("Die", new State(onExit: t => this.Die()));
+        this._stateMachine.AddState("Die", new CoState(this, this.Die , loop: false));
 
         this._stateMachine.AddTriggerTransitionFromAny("OnTakeDemage", "TakeDemage");
         this._stateMachine.AddTriggerTransitionFromAny("OnDie", "Die", t => this.health <= 0);
@@ -139,7 +142,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         this._stateMachine.AddTriggerTransitionFromAny("OnAttack", "Attack", t => this.inAttackRange);
         // this._stateMachine.AddTwoWayTransition("Detected", "Attack", t => this.inAttackRange);
         // this._stateMachine.AddTwoWayTransition("Attack", "Patrol", t => !this.inAttackRange);
-
+        this._stateMachine.AddTwoWayTransition("TakeDemage", "Detected", t => this.isDemageProcess == false);
 
         this._stateMachine.SetStartState("Patrol");
         this._stateMachine.Init();
@@ -163,6 +166,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
             // Debug.DrawRay(this.lookingRay.origin, this.lookingRay.direction * this.detectionRange, Color.red);
             this._stateMachine.OnLogic();
         }
+        Debug.Log(this._stateMachine.ActiveState.name);
     }
 
     public IEnumerator CoroutineUpdate()
@@ -292,6 +296,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         this.inAttack = false;
         this.inAttackRange = false;
         // this._currentCoroutine = this.StartCoroutine("CoroutineUpdate");
+        this._stateMachine.Trigger("Detected");
     }
 
     public void PlayAttackSFX()
@@ -311,7 +316,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     //     yield return new WaitForSeconds(this.updateRate);
     // }
 
-    public virtual void TakeDamage(int damage = 1)
+    public virtual void TakeDamageEmmiter(int damage = 1)
     {
         Debug.Log("get damage");
         if (this.isDemageProcess) return;
@@ -346,13 +351,14 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     {
         Debug.Log("reset demage process");
         this.isDemageProcess = false;
-        this._stateMachine.Trigger("Detected");
+        // this._stateMachine.Trigger("Detected");
         // this._currentCoroutine = this.StartCoroutine("CoroutineUpdate");
     }
 
-    public virtual void Die()
+    public virtual IEnumerator Die()
     {
-        StartCoroutine("DieAnimation");
+        yield return DieAnimation();
+        this._stateMachine.RequestExit(true);
         Destroy(this.gameObject);
     }
 

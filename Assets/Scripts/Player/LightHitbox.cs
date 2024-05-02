@@ -20,7 +20,7 @@ public class LightHitbox : MonoBehaviour
             if (this._player)
             {
                 var playerMI = this._player.GetComponent<PlayerStatus>();
-                enemyDetect.TakeDamage(playerMI.attack);
+                enemyDetect.TakeDamageEmmiter(playerMI.attack);
             }
         
         }
