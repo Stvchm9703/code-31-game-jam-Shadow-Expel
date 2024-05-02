@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using PrimeTween;
 using UnityEngine;
 
 public class StatusBarUI : MonoBehaviour
@@ -21,7 +22,12 @@ public class StatusBarUI : MonoBehaviour
 
     public void UpdateValue(float persentage)
     {
-        statusValueBar.sizeDelta = new Vector2((statusBar.sizeDelta.x - 10) * persentage, statusValueBar.sizeDelta.y);
+        
+        statusValueBar.sizeDelta = new Vector2(
+            (statusBar.sizeDelta.x - 10) * persentage, 
+            statusValueBar.sizeDelta.y
+        );
+
     }
     
     public void UpdateValue(float current, float max)

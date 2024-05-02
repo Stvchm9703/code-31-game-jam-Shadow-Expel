@@ -15715,13 +15715,15 @@ MonoBehaviour:
   lightMode: 0
   lampLight: {fileID: 6625409161390242636}
   torchLight: {fileID: 4604252834847200809}
-  torchLightComponent: {fileID: 2018835043873694163}
-  torchLightMaxIntensity: 0
-  torchLightMinIntensity: 700
-  torchLightMaxRange: 8
-  torchLightMinRange: 2
-  torchLightMaxPower: 0
-  statusAnimationController: {fileID: 0}
+  torchLightComponent: {fileID: 4474035189869810939}
+  lampLightComponent: {fileID: 2018835043873694163}
+  powerCellCount: 0
+  lampLightMaxIntensity: 0
+  lampLightMinIntensity: 700
+  lampLightMaxRange: 8
+  lampLightMinRange: 2
+  lampLightMaxPower: 100
+  statusAnimationController: {fileID: 785543187}
 --- !u!4 &524917335729159522
 Transform:
   m_ObjectHideFlags: 0
