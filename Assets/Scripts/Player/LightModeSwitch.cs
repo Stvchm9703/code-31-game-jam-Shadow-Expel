@@ -1,76 +1,101 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using PrimeTween;
+using UnityEngine;
 
 public class LightModeSwitch : MonoBehaviour
 {
     public int lightMode;
     public GameObject lampLight;
     public GameObject torchLight;
-   
-    float torchLightIntensity, torchLightPower = 100;
-    public float torchLightMaxIntensity, torchLightMaxPower = 100;
+    public Light torchLightComponent;
+    public Light lampLightComponent;
+
+    public int powerCellCount;
+    public UIController uiController;
+
+    public float lampLightMaxIntensity = 1500f;
+
+    public float lampLightMinIntensity = 700f;
+
+    public float lampLightMaxRange = 8f;
+
+    public float lampLightMinRange = 2f;
+
+    public float lampLightMaxPower = 100;
+
+
     // Start is called before the first frame update
     public StatusAnimationController statusAnimationController;
-    void Start()
+
+    private float lampLightPower = 100;
+
+    public float torchLightIntensity => this.lampLightMinIntensity + this.lampLightPower / this.lampLightMaxPower * (this.lampLightMaxIntensity - this.lampLightMinIntensity);
+
+    public float torchLightRange => this.lampLightMinRange + this.lampLightPower / this.lampLightMaxPower * (this.lampLightMaxRange - this.lampLightMinRange);
+
+    private void Start()
     {
+        if (this.torchLightComponent == null) this.torchLightComponent = this.torchLight.GetComponent<Light>();
+        if (this.lampLightComponent == null) this.lampLightComponent = this.lampLight.GetComponent<Light>();
         // TorchLightSwitch(true);
-        SwitchLightMode(0);
+        this.SwitchLightMode(0);
     }
 
-    // private void FixedUpdate()
-    // {
-    //     
-    // }
+    private void FixedUpdate()
+    {
+        this.UpdateLampLightPower(Time.fixedTime);
+    }
 
+    private void UpdateLampLightPower(float deltaTime)
+    {
+        // torchLightIntensity = (torchLightPower / torchLightMaxPower) * torchLightMaxIntensity;
+        // var target = this.torchLight.GetComponent<Light>();
+        // target.intensity = torchLightIntensity;
+
+        // torch power comsumption
+        if (this.lightMode == 0)
+            // recharge 
+            this.lampLightPower = Math.Clamp(this.lampLightPower + deltaTime * 3.5f, 0f, this.lampLightMaxPower);
+        else if (this.lightMode == 1)
+            // consume
+            this.lampLightPower = Math.Clamp(this.lampLightPower - deltaTime * 5f, 0f, this.lampLightMaxPower);
+    }
 
     public void SwitchLightMode(int mode)
     {
         this.lightMode = mode;
         if (this.lightMode == 0)
         {
-            TorchLightSwitch(true);
-            LampLightSwitch(false);
+            this.TorchLightSwitch(true);
+            this.LampLightSwitch(false);
         }
         else if (this.lightMode == 1)
         {
-            TorchLightSwitch(false);
-            LampLightSwitch(true);
+            this.TorchLightSwitch(false);
+            this.LampLightSwitch(true);
         }
     }
 
-    void TorchLightSwitch(bool on)
+    private void TorchLightSwitch(bool on)
     {
-        var target = this.torchLight.GetComponent<Light>();
         if (on)
         {
-            Tween.LightIntensity(target, 3f, 0.15f);
-            Tween.LightRange(target, 2.5f, 0.15f);
+            Tween.LightIntensity(this.torchLightComponent, 3f, 0.15f);
+            Tween.LightRange(this.torchLightComponent, 2.5f, 0.15f);
         }
         else
         {
- 
-            Tween.LightIntensity(target, 2.5f, 0.15f);
-            Tween.LightRange(target, 2f, 0.15f);
+            Tween.LightIntensity(this.torchLightComponent, 2.5f, 0.15f);
+            Tween.LightRange(this.torchLightComponent, 2f, 0.15f);
         }
     }
 
-    void LampLightSwitch(bool on)
+    private void LampLightSwitch(bool on)
     {
-        var light = this.lampLight.GetComponent<Light>();
+        // var light = this.lampLight.GetComponent<Light>();
         if (on)
-        {
-            light.intensity = 1200f;
-            light.range = 8f;
-            lampLight.SetActive(true);
-            // Tween.LightIntensity(light, 3f, 0.5f);
-            // Tween.LightRange(light, 4.5f, 0.5f);
-        }
+            this.lampLight.SetActive(true);
         else
-        {
-            lampLight.SetActive(false);
-        }
+            this.lampLight.SetActive(false);
     }
 }

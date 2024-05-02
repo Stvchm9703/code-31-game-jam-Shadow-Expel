@@ -166,7 +166,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
             // Debug.DrawRay(this.lookingRay.origin, this.lookingRay.direction * this.detectionRange, Color.red);
             this._stateMachine.OnLogic();
         }
-        Debug.Log(this._stateMachine.ActiveState.name);
+        // Debug.Log(this._stateMachine.ActiveState.name);
     }
 
     public IEnumerator CoroutineUpdate()
@@ -235,7 +235,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public virtual void CheckInAttackRage()
     {
-        Debug.Log("CheckInAttackRage");
+        // Debug.Log("CheckInAttackRage");
         // this.inAttackRange = Vector3.Distance(this.transform.position, this.target) < this.attackRange;
         this.inAttackRange = Vector3.Distance(transform.position, target) < attackRange;
         // if (this.inAttackRange)
@@ -247,7 +247,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public virtual IEnumerator CausalBehaviour()
     {
-        Debug.Log("Causal Behaviour");
+        // Debug.Log("Causal Behaviour");
         int randomPointIndex = Random.Range(0, this.patrolPoints.Count);
         var pos = this.patrolPoints[randomPointIndex].position;
         var randomPoint = new Vector3(
@@ -274,7 +274,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public virtual IEnumerator ChasePlayer()
     {
-        Debug.Log("Chase Player");
+        // Debug.Log("Chase Player");
         var newPosition = GameObject.FindGameObjectWithTag("Player").transform.position;
         newPosition.y = this.transform.position.y;
         this.target = newPosition;
@@ -283,7 +283,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public virtual IEnumerator Attack()
     {
-        Debug.Log("Attack Phase");
+        // Debug.Log("Attack Phase");
         // Attack the player
         // ...
         PlayAttackSFX();
@@ -318,7 +318,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public virtual void TakeDamageEmmiter(int damage = 1)
     {
-        Debug.Log("get damage");
+        // Debug.Log("get damage");
         if (this.isDemageProcess) return;
         this.health -= damage;
         this.isDemageProcess = true;
@@ -334,7 +334,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public virtual IEnumerator TakeDamageAnimation()
     {
-        Debug.Log("get damage animation");
+        // Debug.Log("get damage animation");
         this.PlayTakeDemageSFX();
         yield return new WaitForSeconds(this.updateRate + this._demageProcessTime);
         ResetAfterDemage();
@@ -349,13 +349,13 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public void ResetAfterDemage()
     {
-        Debug.Log("reset demage process");
+        // Debug.Log("reset demage process");
         this.isDemageProcess = false;
         // this._stateMachine.Trigger("Detected");
         // this._currentCoroutine = this.StartCoroutine("CoroutineUpdate");
     }
 
-    public virtual IEnumerator Die()
+    public IEnumerator Die()
     {
         yield return DieAnimation();
         this._stateMachine.RequestExit(true);
@@ -364,7 +364,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public virtual IEnumerator DieAnimation()
     {
-        Debug.Log("Die animation");
+        // Debug.Log("Die animation");
         // Play damage animation
         this.PlayDieSound();
         yield return new WaitForSeconds(1f);

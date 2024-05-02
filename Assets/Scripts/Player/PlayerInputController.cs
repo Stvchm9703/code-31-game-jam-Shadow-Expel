@@ -116,7 +116,7 @@ public class PlayerMoveInputController : MonoBehaviour
     private Vector3 _rawMovementInput;
     // private Ray _spotLightRay;
 
-    
+
     // private UIController _uiController;
     // private Rigidbody rb;
 
@@ -260,15 +260,8 @@ public class PlayerMoveInputController : MonoBehaviour
         }
         // }
     }
-    public static float CalculateAngle180_v3(Vector3 fromDir, Vector3 toDir)
-    {
-        // float angle = Quaternion.FromToRotation(fromDir, toDir).eulerAngles.y;
-        // if(angle > 180){return angle - 360f;}
-        return Mathf.Atan2(fromDir.z - toDir.z, fromDir.x - toDir.x) * 180 / Mathf.PI;
-        // Mathf.Atan2(Point_2.y - Point_1.y , Point_2.x-Point_1.x) * 180 / Mathf.PI;
-        // return Vector2.SignedAngle( new Vector2(fromDir.x, fromDir.z) - new Vector2(toDir.x , toDir.y), Vector2.right) * Mathf.Rad2Deg;
-        // return angle;
-    }
+
+    
 
     // public virtual void DetectHitted()
     // {
@@ -353,7 +346,7 @@ public class PlayerMoveInputController : MonoBehaviour
         }
 
         // Tween.LocalPosition(this._lightTransform, new Vector3(ctx.x, this._lightTransform.localPosition.y, ctx.y), 0.5f);
-        this._rawFacingAngle =  (Mathf.Rad2Deg * angle);
+        this._rawFacingAngle = Mathf.Rad2Deg * angle;
         this.UpdateAnimation();
     }
 

@@ -2440,11 +2440,6 @@ PrefabInstance:
       propertyPath: 'patrolPoints.Array.data[3]'
       value: 
       objectReference: {fileID: 1327854336}
-    - target: {fileID: 8273063918292087109, guid: 6c3e220b3f2674e1cacdbd1220ded5ee,
-        type: 3}
-      propertyPath: m_Force.y
-      value: -15
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -15720,7 +15715,11 @@ MonoBehaviour:
   lightMode: 0
   lampLight: {fileID: 6625409161390242636}
   torchLight: {fileID: 4604252834847200809}
+  torchLightComponent: {fileID: 2018835043873694163}
   torchLightMaxIntensity: 0
+  torchLightMinIntensity: 700
+  torchLightMaxRange: 8
+  torchLightMinRange: 2
   torchLightMaxPower: 0
   statusAnimationController: {fileID: 0}
 --- !u!4 &524917335729159522
@@ -15766,7 +15765,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eebf114ff47a14ee8bbe733659a7359c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dashGasCount: 0
+  dashGasCount: 2.5
   maxDashGasCount: 3
   isDodging: 0
   isDashing: 0
