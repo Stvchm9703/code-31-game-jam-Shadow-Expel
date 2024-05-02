@@ -27,12 +27,8 @@ public class StatusCellBarUI : MonoBehaviour
     // persentage = 0.0f ~ 1.0f
     public void UpdateValue(float persentage)
     {
-        Debug.Log("persentage : "+ persentage);
-        
         int cell_index = (int) (persentage * this.cellCount);
         float cellPersentage = persentage * this.cellCount - cell_index;
-        Debug.Log("cell_index : "+ cell_index); 
-        Debug.Log("cellPersentage : "+ cellPersentage);
         if (cell_index == this.cellCount + 1)
         {
             return;
@@ -51,22 +47,5 @@ public class StatusCellBarUI : MonoBehaviour
         }
         
         
-        // for (var i = 0; i < this.cellCount; i++)
-        // { 
-        //     var cellValueBar = this.cellValueBars[i];
-        //     if ( i < persentage * this.cellCount)
-        //     {
-        //         cellValueBar.UpdateValue(10, 10);
-        //     }
-        //     else if (i < persentage * this.cellCount)
-        //     {
-        //         cellValueBar.UpdateValue(10 ,  10);
-        //     }
-        //     // else
-        //     // {
-        //     //     // cellValueBar.UpdateValue((persentage * 10) % 1);
-        //     //     cellValueBar.UpdateValue(0);
-        //     // }
-        // }
     }
 }

@@ -11,6 +11,8 @@ public class LightModeSwitch : MonoBehaviour
     public Light torchLightComponent;
     public Light lampLightComponent;
 
+    public CapsuleCollider lampLightCollider;
+    
     public int powerCellCount;
 
     public float lampLightMaxIntensity = 1500f,  lampLightMinIntensity = 700f;
@@ -23,23 +25,6 @@ public class LightModeSwitch : MonoBehaviour
     // Start is called before the first frame update
     public StatusAnimationController statusAnimationController;
 
-
-    public float lampLightIntensity  {
-        get
-        {
-            var intensity = this.lampLightMinIntensity + this.lampLightPower / this.lampLightMaxPower * (this.lampLightMaxIntensity - this.lampLightMinIntensity);
-            return (float) Math.Round(intensity);
-        }
-    }
-
-    public float lampLightRange
-    {
-        get
-        {
-            var range = this.lampLightMinRange + this.lampLightPower / this.lampLightMaxPower * (this.lampLightMaxRange - this.lampLightMinRange);
-            return (float) Math.Round(range );
-        }
-    }
     
 
     private void Start()
@@ -72,17 +57,26 @@ public class LightModeSwitch : MonoBehaviour
             this.lampLightPower = Math.Clamp(this.lampLightPower - (deltaTime / 15f), 0f, this.lampLightMaxPower);
 
         var power = this.lampLightPower / this.lampLightMaxPower;
-        statusAnimationController.UpdateTorchPowerBar( power );
-        
-        // if (this.lampLightComponent.intensity != this.lampLightIntensity)
-        // {
-        //     Tween.LightIntensity(this.lampLightComponent, this.lampLightIntensity, 0.15f);
-        // }
+        statusAnimationController.UpdateTorchPowerBar(power);
 
-        // if (this.lampLightComponent.range != this.lampLightRange)
-        // {
-        //     Tween.LightRange(this.lampLightComponent, this.lampLightRange, 0.15f);
-        // }
+        if (power > 0.7)
+        {
+            this.lampLightComponent.intensity = this.lampLightMaxIntensity;
+            // this.lampLightComponent.range = this.lampLightMaxRange;
+            lampLightCollider.height = 5f;
+        }
+        else if (power <= 0.7 && power >= 0.2)
+        {
+            this.lampLightComponent.intensity = Mathf.Lerp(this.lampLightMinIntensity, this.lampLightMaxIntensity, power);
+            // this.lampLightComponent.range = Mathf.Lerp(this.lampLightMinRange, this.lampLightMaxRange, power);
+            lampLightCollider.height = Mathf.Lerp(2f, 5f, power);
+
+        }
+        else if (power < 0.2)
+        {
+            this.lampLightComponent.intensity = this.lampLightMinIntensity;
+            lampLightCollider.height = 2f;
+        }
     }
 
     public void SwitchLightMode(int mode)

@@ -15717,12 +15717,14 @@ MonoBehaviour:
   torchLight: {fileID: 4604252834847200809}
   torchLightComponent: {fileID: 4474035189869810939}
   lampLightComponent: {fileID: 2018835043873694163}
+  lampLightCollider: {fileID: 1324357552}
   powerCellCount: 0
-  lampLightMaxIntensity: 0
-  lampLightMinIntensity: 700
+  lampLightMaxIntensity: 1800
+  lampLightMinIntensity: 600
   lampLightMaxRange: 8
-  lampLightMinRange: 2
+  lampLightMinRange: 4
   lampLightMaxPower: 100
+  lampLightPower: 100
   statusAnimationController: {fileID: 785543187}
 --- !u!4 &524917335729159522
 Transform:
