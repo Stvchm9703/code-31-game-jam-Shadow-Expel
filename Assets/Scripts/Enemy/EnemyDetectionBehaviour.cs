@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 using RaycastHit = UnityEngine.RaycastHit;
-
+using UnityHFSM;
 public abstract class IEnemyDetectBehaviour : MonoBehaviour
 {
     public int health;
@@ -31,12 +31,13 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     //
     public bool isPaused;
 
+    GameObject _player;
+
     public Vector3 target; // Reference to the player's transform
     public float moveSpeed = 7.5f; // Speed at which the enemy moves towards the player
     public float updateRate = 5f; // Rate at which the enemy updates its position
 
     public GameObject plane;
-
     public Texture monsterSkin;
 
     // enemy detection range
@@ -59,24 +60,39 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     public bool faceDirection => (this.target.x - this.transform.position.x) > 0;
 
     Coroutine _currentCoroutine;
-    
-    [SerializeField] private List<AudioClip> _attackSound , _demageSound, _dieSound, _idleSound;
+
+    [SerializeField] private List<AudioClip> _attackSound, _demageSound, _dieSound, _idleSound;
     // AudioSource _audioSource;
     // body collider
+
+    StateMachine _stateMachine;
+
     private void OnCollisionEnter(Collision collision)
     {
+        // Debug.Log(collision.gameObject);
         // Check if the enemy collided with the player
         if (collision.gameObject.CompareTag("Player") && this.inAttack)
         {
             // Deal damage to the player
             // ...
+            if (this._player)
+            {
+                var playerMI = this._player.GetComponent<PlayerStatus>();
+                playerMI.TakeDamage(this.attackDamage);
+            }
         }
-        else if (collision.gameObject.CompareTag("AttackHitbox"))
-        {
-            // Deal damage to the enemy
-            // ...
-            // this.TakeDamage();
-        }
+        // else if (collision.gameObject.CompareTag("HitboxJudgement"))
+        // {
+        //     // Deal damage to the enemy
+        //     // ...
+        //     // this.TakeDamage();
+        //     if (this._player)
+        //     {
+        //         var playerMI = this._player.GetComponent<PlayerStatus>();
+        //         TakeDamage(playerMI.attack);
+        //     }
+        //     this._stateMachine.Trigger("OnTakeDemage");
+        // }
     }
 
     private void OnDrawGizmosSelected()
@@ -102,12 +118,33 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
                 .material.SetTexture(PlaneRendererCharacterTexture, this.monsterSkin);
 
         this.target = this.transform.position;
+
+        this._player = GameObject.FindGameObjectWithTag("Player");
         // this.lookingRay = new Ray(this.transform.position, this.transform.forward);
-        this._currentCoroutine = this.StartCoroutine("CoroutineUpdate");
+        // this._currentCoroutine = this.StartCoroutine("CoroutineUpdate");
         GameStateManager.Instance.OnGameStateChanged += this.OnGameStateChanged;
 
+        this._stateMachine = new StateMachine();
+        this._stateMachine.AddState("Patrol", new CoState(this, this.CausalBehaviour, loop: true));
+        this._stateMachine.AddState("Attack", new CoState(this, this.Attack, loop: false));
+        this._stateMachine.AddState("Detected", new CoState(this, this.ChasePlayer, loop: true));
+        this._stateMachine.AddState("TakeDemage", new CoState(this, this.TakeDamageAnimation, loop: false));
+        this._stateMachine.AddState("Die", new State(onExit: t => this.Die()));
+
+        this._stateMachine.AddTriggerTransitionFromAny("OnTakeDemage", "TakeDemage");
+        this._stateMachine.AddTriggerTransitionFromAny("OnDie", "Die", t => this.health <= 0);
+
+        this._stateMachine.AddTwoWayTransition("Patrol", "Detected", t => this.isPlayerDetected);
+
+        this._stateMachine.AddTriggerTransitionFromAny("OnAttack", "Attack", t => this.inAttackRange);
+        // this._stateMachine.AddTwoWayTransition("Detected", "Attack", t => this.inAttackRange);
+        // this._stateMachine.AddTwoWayTransition("Attack", "Patrol", t => !this.inAttackRange);
+
+
+        this._stateMachine.SetStartState("Patrol");
+        this._stateMachine.Init();
     }
-    
+
 
     public void OnDestroy()
     {
@@ -117,14 +154,14 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     // call this method in the Implement FixedUpdate
     public virtual void onUpdate()
     {
-        
+
         if (this.isPaused == false)
         {
             this.Move(Time.fixedDeltaTime);
             this.DetectPlayer(Time.fixedDeltaTime);
             this.CheckAttack();
             // Debug.DrawRay(this.lookingRay.origin, this.lookingRay.direction * this.detectionRange, Color.red);
-            
+            this._stateMachine.OnLogic();
         }
     }
 
@@ -144,7 +181,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
             {
                 yield return new WaitUntil(() => this.isPaused == false);
             }
-    
+
             yield return new WaitForSeconds(this.updateRate);
         }
     }
@@ -157,10 +194,11 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public virtual void DetectPlayer(float timeChange)
     {
+        var currentDirection = IEnemyDetectBehaviour.GetDirection(this.transform.position, this.target);
         int hitsNum = Physics.SphereCastNonAlloc(
             this.transform.position,
             this.detectionRange,
-            IEnemyDetectBehaviour.GetDirection(this.transform.position, this.target),
+            currentDirection,
             this._lookingRaycastHits,
             this.detectionRange,
             this.detectionLayer
@@ -172,7 +210,10 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
             foreach (RaycastHit hitted in this._lookingRaycastHits)
             {
                 if (!hitted.collider) continue;
-                if (hitted.collider.gameObject && hitted.collider.gameObject == playerGO)
+                Vector3 hitPoint = hitted.point;
+                Vector3 directionToHit = hitPoint - this.transform.position;
+                float angleToHit = Vector3.Angle(currentDirection, directionToHit);
+                if (hitted.collider.gameObject && hitted.collider.gameObject == playerGO && angleToHit < 45f)
                 {
                     this.isPlayerDetected = true;
                     this.attentionTimer = this.attentionTimeout;
@@ -190,17 +231,19 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public virtual void CheckInAttackRage()
     {
+        Debug.Log("CheckInAttackRage");
         // this.inAttackRange = Vector3.Distance(this.transform.position, this.target) < this.attackRange;
         this.inAttackRange = Vector3.Distance(transform.position, target) < attackRange;
-        if (this.inAttackRange)
-        {
-            this.StopCoroutine(this._currentCoroutine);
-            this._currentCoroutine = this.StartCoroutine("Attack");
-        }
+        // if (this.inAttackRange)
+        // {
+        //     // this.StopCoroutine(this._currentCoroutine);
+        //     // this._currentCoroutine = this.StartCoroutine("Attack");
+        // }
     }
 
     public virtual IEnumerator CausalBehaviour()
     {
+        Debug.Log("Causal Behaviour");
         int randomPointIndex = Random.Range(0, this.patrolPoints.Count);
         var pos = this.patrolPoints[randomPointIndex].position;
         var randomPoint = new Vector3(
@@ -220,14 +263,23 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     }
     public virtual void UpdateTarget()
     {
+
         this.target = GameObject.FindGameObjectWithTag("Player").transform.position;
         this.target.y = this.transform.position.y; // Keep the enemy at the same height as the player
     }
 
+    public virtual IEnumerator ChasePlayer()
+    {
+        Debug.Log("Chase Player");
+        var newPosition = GameObject.FindGameObjectWithTag("Player").transform.position;
+        newPosition.y = this.transform.position.y;
+        this.target = newPosition;
+        yield return new WaitForSeconds(this.updateRate * 0.3f);
+    }
 
     public virtual IEnumerator Attack()
     {
-        // Debug.Log("Attack Phase");
+        Debug.Log("Attack Phase");
         // Attack the player
         // ...
         PlayAttackSFX();
@@ -239,7 +291,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     {
         this.inAttack = false;
         this.inAttackRange = false;
-        this._currentCoroutine = this.StartCoroutine("CoroutineUpdate");
+        // this._currentCoroutine = this.StartCoroutine("CoroutineUpdate");
     }
 
     public void PlayAttackSFX()
@@ -248,7 +300,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         var randomIndex = Random.Range(0, this._attackSound.Count);
         SoundFXManager.Instance.PlaySoundFX(this._attackSound[randomIndex], this.transform);
     }
-    
+
     // public virtual IEnumerator Defend()
     // {
     //     // Defend against the player's attack
@@ -263,14 +315,16 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     {
         Debug.Log("get damage");
         if (this.isDemageProcess) return;
-
         this.health -= damage;
         this.isDemageProcess = true;
-        StopCoroutine(this._currentCoroutine);
-        this._currentCoroutine = StartCoroutine("TakeDamageAnimation");
 
-        if (this.health <= 0)
-            StartCoroutine("Die");
+        if (this.health <= 0) this._stateMachine.Trigger("OnDie");
+        else this._stateMachine.Trigger("OnTakeDemage");
+        // StopCoroutine(this._currentCoroutine);
+        // this._currentCoroutine = StartCoroutine("TakeDamageAnimation");
+
+        /// if (this.health <= 0) this._stateMachine.Trigger("Die");
+            // StartCoroutine("Die");
     }
 
     public virtual IEnumerator TakeDamageAnimation()
@@ -292,7 +346,8 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     {
         Debug.Log("reset demage process");
         this.isDemageProcess = false;
-        this._currentCoroutine = this.StartCoroutine("CoroutineUpdate");
+        this._stateMachine.Trigger("Detected");
+        // this._currentCoroutine = this.StartCoroutine("CoroutineUpdate");
     }
 
     public virtual void Die()

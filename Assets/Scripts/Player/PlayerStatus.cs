@@ -6,26 +6,38 @@ using UnityEngine.UI;
 public class PlayerStatus : MonoBehaviour
 {
     // Add your member variables and properties here
-    public int health;
-    public int maxHealth;
+    public float health, maxHealth;
     public int attack;
-    public int defense;
     public int speed;
-
-  public int dashTime;
-    // public List<> inventory;
-    // public List<GameObject> equipment;
-    public List<int> buffs;
+    public PlayerMoveInputController playerMoveInputController;
+    public StatusAnimationController statusAnimationController;
+    public float dashPercent => (float) Math.Round( playerMoveInputController.dashGasCount / playerMoveInputController.maxDashGasCount , 2);
+    // Add your methods and event handlers here
+    
 
     private void Start()
     {
-        // Add your initialization code here
+        if (this.playerMoveInputController == null)
+        {
+            this.playerMoveInputController = this.GetComponent<PlayerMoveInputController>();
+        }
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        // Add your update code here
+        // Update the status bars
+        statusAnimationController.UpdateHpBar((float) health / maxHealth);
+        statusAnimationController.UpdateDashBar(this.dashPercent);
+        
     }
-
-    // Add your methods and event handlers here
+    
+    public void TakeDamage(float damage)
+    {
+        
+        this.health -= damage;
+        if (this.health <= 0)
+        {
+            // this.Die();
+        }
+    }
 }

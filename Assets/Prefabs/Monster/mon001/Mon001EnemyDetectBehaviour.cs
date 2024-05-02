@@ -13,12 +13,12 @@ public class Mon001EnemyDetectBehaviour : IEnemyDetectBehaviour
 
     private void Start()
     {
-        onStart();
         attackPlane = transform.Find("AttackPlane").gameObject;
         this._attackPlaneRenderer = attackPlane.GetComponent<Renderer>();
-        if (attackSkin != null) 
+        if (attackSkin != null)
             this._attackPlaneRenderer.material.SetTexture(AttackPlaneRenderCharacterTexture, attackSkin);
         attackPlane.SetActive(false);
+        onStart();
     }
 
     private void FixedUpdate()
@@ -29,23 +29,24 @@ public class Mon001EnemyDetectBehaviour : IEnemyDetectBehaviour
     public override IEnumerator Attack()
     {
         inAttack = true;
+        Debug.Log("Mon001 Attack Phase");
         // Play the attack animation
         // ...
-        // fake preattack animation 
+        // fake preattack animation
         yield return new WaitForSeconds(1.2f);
         if (attackPlane)
-        {   
+        {
             plane.SetActive(false);
-            this._attackPlaneRenderer.material.SetInt(AttackPlaneRenderIsFlip, faceDirection? 1 : 0);
+            this._attackPlaneRenderer.material.SetInt(AttackPlaneRenderIsFlip, faceDirection ? 1 : 0);
             attackPlane.SetActive(true);
             yield return new WaitForSeconds(this.attackCD);
             plane.SetActive(true);
             attackPlane.SetActive(false);
         }
-        this.PlayAttackSFX();      
+        this.PlayAttackSFX();
         this.ResetAfterAttack();
     }
-    
+
     // !TODO: add the take damage animation  "TakeDamageAnimation"
 
     // !TODO: add the Die animation "DieAnimation"

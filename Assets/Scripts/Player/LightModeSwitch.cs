@@ -9,14 +9,22 @@ public class LightModeSwitch : MonoBehaviour
     public int lightMode;
     public GameObject lampLight;
     public GameObject torchLight;
+   
+    float torchLightIntensity, torchLightPower = 100;
+    public float torchLightMaxIntensity, torchLightMaxPower = 100;
     // Start is called before the first frame update
-
+    public StatusAnimationController statusAnimationController;
     void Start()
     {
         // TorchLightSwitch(true);
         SwitchLightMode(0);
     }
-    
+
+    // private void FixedUpdate()
+    // {
+    //     
+    // }
+
 
     public void SwitchLightMode(int mode)
     {

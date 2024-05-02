@@ -5,7 +5,6 @@ using System.Linq;
 using PrimeTween;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 // using Survor.ActionMaps;
 // using Survor.ECS.Bullet;
@@ -46,11 +45,11 @@ public class PlayerMoveInputController : MonoBehaviour
 
     // private int jumpCount,
     //     maxJumpCount = 2;
-    public int attackDamage = 1;
+    // public int attackDamage = 1;
 
 
     [SerializeField]
-    private float dashGasCount = 3f,
+    public float dashGasCount = 3f,
         maxDashGasCount = 3f;
 
     [SerializeField]
@@ -64,74 +63,80 @@ public class PlayerMoveInputController : MonoBehaviour
 
     public float spotLightRange = 7f;
 
-    private readonly RaycastHit[] _spotLightRaycastHits = new RaycastHit[15];
-    private readonly RaycastHit[] _closeRaycastHits = new RaycastHit[15];
-    private Transform _lightTransform;
-    private Ray _spotLightRay;
-
-    private AnimationController _animationController;
-    private PlayerInventoryController _playerInventoryController;
-    // private bool _isItemTouched;
-
-    private Camera _mainCamera;
+    public AnimationController _animationController;
 
     [SerializeField]
     private List<GameObject> itemTouched;
 
+    // gamepad right side / right-side joystick / Mouse
+    [SerializeField]
+    private float _rawFacingAngle;
+
+    private readonly RaycastHit[] _closeRaycastHits = new RaycastHit[15];
+
+    private readonly RaycastHit[] _spotLightRaycastHits = new RaycastHit[15];
+
+    private Transform _lightTransform;
+    // private bool _isItemTouched;
+
+    private Camera _mainCamera;
+
     /**
-     * private void onAnimatorInit()a
-     * {
-     * // animator init
-     * this.moving = gameObject.transform.Find("moving").gameObject;
-     * this.movingTransform = gameObject.transform.Find("moving");
-     * this.movingPlayer = this.moving.GetComponent<SkeletonAnimation>();
-       this.movingPlayer.AnimationState.SetAnimation(0, "Relax", true);
-       this.front = gameObject.transform.Find("front").gameObject;
-       this.frontTransform = gameObject.transform.Find("front");
-       this.frontPlayer = this.front.GetComponent<SkeletonAnimation> ();
-       this.front.SetActive(false);
-     * this.back = gameObject.transform.Find("back").gameObject;
-     * this.backTransform = gameObject.transform.Find("back");
-     * this.backPlayer = this.back.GetComponent<SkeletonAnimation>();
-     * this.back.SetActive(false);
-     *}
+     * * private void onAnimatorInit()a
+     * * {
+     * * // animator init
+     * * this.moving = gameObject.transform.Find("moving").gameObject;
+     * * this.movingTransform = gameObject.transform.Find("moving");
+     * * this.movingPlayer = this.moving.GetComponent
+     * <SkeletonAnimation>
+     *     ();
+     *     this.movingPlayer.AnimationState.SetAnimation(0, "Relax", true);
+     *     this.front = gameObject.transform.Find("front").gameObject;
+     *     this.frontTransform = gameObject.transform.Find("front");
+     *     this.frontPlayer = this.front.GetComponent
+     *     <SkeletonAnimation>
+     *         ();
+     *         this.front.SetActive(false);
+     *         * this.back = gameObject.transform.Find("back").gameObject;
+     *         * this.backTransform = gameObject.transform.Find("back");
+     *         * this.backPlayer = this.back.GetComponent
+     *         <SkeletonAnimation>
+     *             ();
+     *             * this.back.SetActive(false);
+     *             *}
      */
     private InputAction _moveAction,
         _dashAction,
         _battleAction,
         _uiAction;
 
-    // gamepad right side / right-side joystick / Mouse
-    [SerializeField]
-    private float _rawFacingAngle;
+    private PlayerInventoryController _playerInventoryController;
 
     // gamepad left side / left-side joystick / A, S, D, W
     private Vector3 _rawMovementInput;
+    // private Ray _spotLightRay;
 
+    
     // private UIController _uiController;
     // private Rigidbody rb;
 
     // private int activeToolIndex = 0; // 0 : none, 1 : lamp, 2 : sword
     // private bool isPaused => GameStateManager.Instance.CurrentGameState == GameState.Paused;
-    private bool isPaused = false;
+    private bool isPaused;
+
     private void Start()
     {
         // this.rb = this.transform.GetComponent<Rigidbody>();
         Transform transform1 = this.transform;
-        this._animationController = transform1.GetComponent<AnimationController>();
+        if (this._animationController == null) this._animationController = transform1.GetComponent<AnimationController>();
         this._playerInventoryController = transform1.GetComponent<PlayerInventoryController>();
         this._lightTransform = transform1.Find("LampLight");
         this.playerState = PlayerState.Idle;
         this._mainCamera = Camera.main;
         // onAnimatorInit();
         // onInputMapInit();
-        this._spotLightRay = new Ray(transform1.position, transform1.forward);
+        // this._spotLightRay = new Ray(transform1.position, transform1.forward);
         GameStateManager.Instance.OnGameStateChanged += this.onGameStateChanged;
-    }
-
-    private void OnDestroy()
-    {
-        GameStateManager.Instance.OnGameStateChanged -= this.onGameStateChanged;
     }
 
     // Update is called once per frame
@@ -139,16 +144,15 @@ public class PlayerMoveInputController : MonoBehaviour
     {
         if (this.isPaused) return;
         this.MovementUpdate(Time.fixedDeltaTime);
-        if (this.isAttack) this.DetectHitted();
+        // if (this.isAttack) this.DetectHitted();
         this.DetechItem();
-        Debug.DrawRay(this._spotLightRay.origin, this._spotLightRay.direction * this.spotLightRange, Color.blue);
+        // Debug.DrawRay(this._spotLightRay.origin, this._spotLightRay.direction * this.spotLightRange, Color.blue);
         // this.CheckAtiveTool();
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDestroy()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(this.transform.position, 1.5f);
+        GameStateManager.Instance.OnGameStateChanged -= this.onGameStateChanged;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -162,16 +166,22 @@ public class PlayerMoveInputController : MonoBehaviour
         //     if (!this._itemTouched.Contains(hited))  this._itemTouched.Add(hited);
         // }
     }
-    
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(this.transform.position, 1.5f);
+    }
+
     public void onGameStateChanged(GameState newGameState)
     {
         if (newGameState == GameState.Paused || newGameState == GameState.InventoryMenu)
         {
-            _animationController.Pause();
+            this._animationController.Pause();
             this.isPaused = true;
         }
         else if (newGameState == GameState.InGame)
-        {   
+        {
             this._animationController.Resume();
             this.isPaused = false;
         }
@@ -193,7 +203,7 @@ public class PlayerMoveInputController : MonoBehaviour
                 this.transform.position +=
                     new Vector3(this._rawMovementInput.x, 0, this._rawMovementInput.z)
                     * (deltaTime * 7.5f);
-                this.dashGasCount -= deltaTime;
+                this.dashGasCount = Math.Clamp(this.dashGasCount - deltaTime, 0, this.maxDashGasCount);
             }
             else
             {
@@ -203,31 +213,31 @@ public class PlayerMoveInputController : MonoBehaviour
                 // Debug.Log("Move Event: x:"+ RawMovementInput.x + "  y:" +RawMovementInput.z);
             }
 
-            this._spotLightRay.origin = this.transform.position;
+            // this._spotLightRay.origin = this.transform.position;
         }
 
-        if (!this.isDashing && this.dashGasCount < this.maxDashGasCount) this.dashGasCount += deltaTime;
-        
-        Tween.LocalRotation(this._lightTransform, new Vector3(0, -this._rawFacingAngle, 0), 0.5f);
-        this._spotLightRay.direction = Quaternion.Euler(0, -this._rawFacingAngle, 0) * this.transform.forward * this.spotLightRange;
+        if (!this.isDashing && this.dashGasCount < this.maxDashGasCount)
+            this.dashGasCount = Math.Clamp(this.dashGasCount + deltaTime, 0, this.maxDashGasCount);
 
+        Tween.LocalRotation(this._lightTransform, new Vector3(0, -1 * this._rawFacingAngle, 0), 0.5f);
+        // this._spotLightRay.direction = Quaternion.Euler(0,  -1 * this._rawFacingAngle, 0) * this.transform.right * this.spotLightRange;
+        // Debug.DrawRay(this._spotLightRay.origin, this._spotLightRay.direction, Color.blue);
     }
 
     public void onMove(InputAction.CallbackContext context)
     {
         this._rawMovementInput = context.ReadValue<Vector3>();
-        
+
         // Jumping
         //
         //
-        
+
         if (this._rawMovementInput.x == 0 && this._rawMovementInput.z == 0)
             this.playerState = PlayerState.Idle;
         else
             this.playerState = PlayerState.Move;
-        
-        this.UpdateAnimation();
 
+        this.UpdateAnimation();
     }
 
     public void onDash(InputAction.CallbackContext context)
@@ -250,52 +260,80 @@ public class PlayerMoveInputController : MonoBehaviour
         }
         // }
     }
-
-    public virtual void DetectHitted()
+    public static float CalculateAngle180_v3(Vector3 fromDir, Vector3 toDir)
     {
-        int hitsNum = Physics.RaycastNonAlloc(
-            this._spotLightRay,
-            this._spotLightRaycastHits,
-            this.spotLightRange,
-            LayerMask.GetMask("monster")
-        );
-        if (hitsNum > 0)
-        {
-            foreach (RaycastHit hitted in this._spotLightRaycastHits)
-            {
-                if (!hitted.collider) continue;
-                var enemyBehaviour = hitted.collider.gameObject.GetComponent<IEnemyDetectBehaviour>();
-                if (enemyBehaviour)
-                {
-                    enemyBehaviour.TakeDamage(this.attackDamage);
-                }
-            }
-        }
+        // float angle = Quaternion.FromToRotation(fromDir, toDir).eulerAngles.y;
+        // if(angle > 180){return angle - 360f;}
+        return Mathf.Atan2(fromDir.z - toDir.z, fromDir.x - toDir.x) * 180 / Mathf.PI;
+        // Mathf.Atan2(Point_2.y - Point_1.y , Point_2.x-Point_1.x) * 180 / Mathf.PI;
+        // return Vector2.SignedAngle( new Vector2(fromDir.x, fromDir.z) - new Vector2(toDir.x , toDir.y), Vector2.right) * Mathf.Rad2Deg;
+        // return angle;
     }
 
-    void DetechItem()
+    // public virtual void DetectHitted()
+    // {
+    //     // set as cone cast
+    //     int hitsNumInRange = Physics.SphereCastNonAlloc(
+    //         this._spotLightRay,
+    //         this.spotLightRange,
+    //         this._spotLightRaycastHits,
+    //         this.spotLightRange,
+    //         LayerMask.GetMask("monster")
+    //     );
+    //     //
+    //
+    //
+    //     
+    //     if (hitsNumInRange > 0)
+    //         foreach (RaycastHit hitted in this._spotLightRaycastHits)
+    //         {
+    //             if (!hitted.collider) continue;
+    //             
+    //             Vector3 directionToHit = hitted.point - this._spotLightRay.origin;
+    //             float angleToHit = Vector2.Angle(
+    //                 new Vector2(_spotLightRay.direction.x , this._spotLightRay.direction.z),
+    //                 Vector2.right
+    //             );
+    //             // float angleN = Vector2.Angle(this._spotLightRay.direction, this.transform.position );
+    //             float angleToHitA = Vector2.Angle(
+    //                 new Vector2( directionToHit.normalized.x , directionToHit.normalized.z),
+    //                 Vector2.right
+    //             );
+    //             // float angle = Vector3.Angle(this._spotLightRay.direction, this.transform.position );
+    //             // Debug.Log("possible hitted: " + directionToHit + "  norm: " + directionToHit.normalized);
+    //             // Debug.Log("orig hitted: " + this._spotLightRay.direction + "  norm: " + this._spotLightRay.direction.normalized);
+    //             Debug.Log("angleToHit : " + Math.Abs(angleToHit - angleToHitA));  
+    //             Debug.Log("angleToHit : " + angleToHit + " "+ angleToHitA);  
+    //             // Debug.Log("raw_angle: " + this._rawFacingAngle);
+    //             // Debug.Log("Hitted: " + hitted.collider.gameObject.name + "  angle: " + angleToHit + "  raw_angle: " + this._rawFacingAngle);
+    //
+    //             if( Math.Abs(angleToHit - angleToHitA) <= 30f)
+    //             {
+    //                 var enemyBehaviour = hitted.collider.gameObject.GetComponent<IEnemyDetectBehaviour>();
+    //                 if (enemyBehaviour) enemyBehaviour.TakeDamage(this.attackDamage);
+    //             }
+    //         }
+    // }
+
+    private void DetechItem()
     {
         int closeHitsNum = Physics.SphereCastNonAlloc(
             this.transform.position,
             1.5f,
-            this._spotLightRay.direction,
+            this.transform.forward,
             this._closeRaycastHits,
             1.5f,
-            LayerMask.GetMask(new string[] { "items", "interactable" })
+            LayerMask.GetMask("items", "interactable")
         );
         if (closeHitsNum > 0)
-        {
             this.itemTouched = this._closeRaycastHits
                 .Where(rh => rh.collider && rh.collider.gameObject)
-                .Select<RaycastHit, GameObject>(
+                .Select(
                     rh => rh.collider.gameObject
                 )
                 .ToList();
-        }
         else
-        {
             this.itemTouched.Clear();
-        }
     }
 
     public void onLook(InputAction.CallbackContext context)
@@ -315,8 +353,8 @@ public class PlayerMoveInputController : MonoBehaviour
         }
 
         // Tween.LocalPosition(this._lightTransform, new Vector3(ctx.x, this._lightTransform.localPosition.y, ctx.y), 0.5f);
-        _rawFacingAngle = Mathf.Rad2Deg * angle;
-        UpdateAnimation();
+        this._rawFacingAngle =  (Mathf.Rad2Deg * angle);
+        this.UpdateAnimation();
     }
 
     /// <summary>
@@ -355,7 +393,6 @@ public class PlayerMoveInputController : MonoBehaviour
     private void InteractAction(InputAction.CallbackContext context, float ctx)
     {
         if (ctx > 0 && context.performed)
-        {
             // this.isAttack = true;
             // this.playerState = PlayerState.Interact;
             // this._lightTransform.GetComponent<LightModeSwitch>().lightMode = 2;
@@ -370,12 +407,8 @@ public class PlayerMoveInputController : MonoBehaviour
                 }
 
                 var interactable = item.GetComponent<ISceneInteractable>();
-                if (interactable != null)
-                {
-                    interactable.Interact();
-                }
+                if (interactable != null) interactable.Interact();
             }
-        }
     }
 
     // public void OnSkillAttack1Event(InputAction.CallbackContext context)
@@ -479,7 +512,7 @@ public class PlayerMoveInputController : MonoBehaviour
     {
         // up
         // up right
-        if ((this._rawFacingAngle > 0 && this._rawFacingAngle <= 90))
+        if (this._rawFacingAngle > 0 && this._rawFacingAngle <= 90)
             return PlayerDirection.UpRight;
 
         // up left
@@ -495,6 +528,4 @@ public class PlayerMoveInputController : MonoBehaviour
 
         return PlayerDirection.DownRight;
     }
-    
-    
 }

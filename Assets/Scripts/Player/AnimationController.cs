@@ -12,16 +12,16 @@ public enum AnimationTarget
 
 public class AnimationController : MonoBehaviour
 {
-    private GameObject front,
+    protected GameObject front,
         back,
         moving;
 
-    private SkeletonAnimation frontPlayer,
+    protected SkeletonAnimation frontPlayer,
         backPlayer,
         movingPlayer;
 
     // private Animator movingAnimator;
-    private Transform frontTransform,
+    protected Transform frontTransform,
         backTransform,
         movingTransform;
 
@@ -32,9 +32,9 @@ public class AnimationController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update() { }
+    // void Update() { }
 
-    private void onAnimatorInit()
+    public virtual void onAnimatorInit()
     {
         // animator init
         this.moving = gameObject.transform.Find("moving").gameObject;
@@ -53,7 +53,7 @@ public class AnimationController : MonoBehaviour
         this.back.SetActive(false);
     }
 
-    public void SpeedChange(float speed)
+    public virtual void SpeedChange(float speed)
     {
         this.frontPlayer.timeScale = speed;
         this.backPlayer.timeScale = speed;
@@ -61,7 +61,7 @@ public class AnimationController : MonoBehaviour
     }
 
 
-    public void UpdateAnimation(
+    public virtual void UpdateAnimation(
         bool isAttack,
         PlayerDirection direction,
         PlayerState playerState
@@ -200,14 +200,14 @@ public class AnimationController : MonoBehaviour
         // yield return null;
     }
 
-    public void Pause()
+    public virtual void Pause()
     {
         this.backPlayer.AnimationState.TimeScale = 0;
         this.frontPlayer.AnimationState.TimeScale = 0;
         this.movingPlayer.AnimationState.TimeScale = 0;
     }
     
-    public void Resume()
+    public virtual void Resume()
     {
         this.backPlayer.AnimationState.TimeScale = 1;
         this.frontPlayer.AnimationState.TimeScale = 1;
