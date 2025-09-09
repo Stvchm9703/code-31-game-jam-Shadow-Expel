@@ -2375,880 +2375,990 @@ ScriptedImporter:
     layerType: 0
     blendMode: 0
     cells:
-    - name: VFX Blood Batch 1_Frame_0
+    - name: Frame_0
       frameIndex: 0
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: 789de860125bd4d35a2378155e747e43
-    - name: VFX Blood Batch 1_Frame_1
+    - name: Frame_1
       frameIndex: 1
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: b3ebdfc034c05459ab59268c3efe7292
-    - name: VFX Blood Batch 1_Frame_2
+    - name: Frame_2
       frameIndex: 2
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: f7354370080c747dba2c58574ae157a0
-    - name: VFX Blood Batch 1_Frame_3
+    - name: Frame_3
       frameIndex: 3
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: 29e2ec3017a0f4cafa49be50cdcc61f8
-    - name: VFX Blood Batch 1_Frame_4
+    - name: Frame_4
       frameIndex: 4
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: b94e82df5f54a4c1f8f4a61cb4df4ead
-    - name: VFX Blood Batch 1_Frame_5
+    - name: Frame_5
       frameIndex: 5
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: 48de1ea6be85942efa165887857f6da6
-    - name: VFX Blood Batch 1_Frame_6
+    - name: Frame_6
       frameIndex: 6
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: d595bdcb5a9b446cfa85aaba1f5a1cb5
-    - name: VFX Blood Batch 1_Frame_7
+    - name: Frame_7
       frameIndex: 7
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: 81b1e5f8c3a1d45158c1e2e460e68c1a
-    - name: VFX Blood Batch 1_Frame_8
+    - name: Frame_8
       frameIndex: 8
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: e51bf9678b463494fb689bcb341babf4
-    - name: VFX Blood Batch 1_Frame_9
+    - name: Frame_9
       frameIndex: 9
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: 1ca80ecc1d117441083b51749705c2f7
-    - name: VFX Blood Batch 1_Frame_10
+    - name: Frame_10
       frameIndex: 10
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: 590701b286b864b9994e4ec49fa1aee4
-    - name: VFX Blood Batch 1_Frame_11
+    - name: Frame_11
       frameIndex: 11
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: a56f20680de1f49b6b369be4e6d030a0
-    - name: VFX Blood Batch 1_Frame_12
+    - name: Frame_12
       frameIndex: 12
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: 7a19ce17d0a3c48daa367dafe2f48549
-    - name: VFX Blood Batch 1_Frame_13
+    - name: Frame_13
       frameIndex: 13
+      additiveSortOrder: 0
       cellRect:
         x: -127
         y: -180
         width: 657
         height: 300
       spriteId: ef60867c8f35e453a824ad95a95af9b5
-    - name: VFX Blood Batch 1_Frame_14
+    - name: Frame_14
       frameIndex: 14
+      additiveSortOrder: 0
       cellRect:
         x: -130
         y: -180
         width: 660
         height: 300
       spriteId: 043cff9bd1e2f468699728b50cd17ba3
-    - name: VFX Blood Batch 1_Frame_15
+    - name: Frame_15
       frameIndex: 15
+      additiveSortOrder: 0
       cellRect:
         x: -130
         y: -180
         width: 660
         height: 300
       spriteId: 11076ed3afb0d4b74a5b844520c212c9
-    - name: VFX Blood Batch 1_Frame_16
+    - name: Frame_16
       frameIndex: 16
+      additiveSortOrder: 0
       cellRect:
         x: -131
         y: -180
         width: 661
         height: 300
       spriteId: 260e948985aeb4860a9520aadba6af40
-    - name: VFX Blood Batch 1_Frame_17
+    - name: Frame_17
       frameIndex: 17
+      additiveSortOrder: 0
       cellRect:
         x: -132
         y: -180
         width: 662
         height: 300
       spriteId: b9dbbd0aba6634673bf67818d0faa626
-    - name: VFX Blood Batch 1_Frame_18
+    - name: Frame_18
       frameIndex: 18
+      additiveSortOrder: 0
       cellRect:
         x: -132
         y: -180
         width: 662
         height: 300
       spriteId: 6cb826f3e5e434e98bdfcdb94fcfa882
-    - name: VFX Blood Batch 1_Frame_19
+    - name: Frame_19
       frameIndex: 19
+      additiveSortOrder: 0
       cellRect:
         x: -132
         y: -180
         width: 662
         height: 300
       spriteId: e17182648f67e4ae997f68bb22f07acf
-    - name: VFX Blood Batch 1_Frame_20
+    - name: Frame_20
       frameIndex: 20
+      additiveSortOrder: 0
       cellRect:
         x: -131
         y: -180
         width: 661
         height: 300
       spriteId: ad856513376a14b0eaddbdc072e80a52
-    - name: VFX Blood Batch 1_Frame_21
+    - name: Frame_21
       frameIndex: 21
+      additiveSortOrder: 0
       cellRect:
         x: -131
         y: -180
         width: 661
         height: 300
       spriteId: 2ef38835e3e74490aa78242b34647cda
-    - name: VFX Blood Batch 1_Frame_22
+    - name: Frame_22
       frameIndex: 22
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: bd129f1ab2e924692a84e443e7e5922f
-    - name: VFX Blood Batch 1_Frame_23
+    - name: Frame_23
       frameIndex: 23
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: 4dbc6b954d42c46339b78b5800d40668
-    - name: VFX Blood Batch 1_Frame_24
+    - name: Frame_24
       frameIndex: 24
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: 7b220ca5b28db4c958b5ff7b82de9666
-    - name: VFX Blood Batch 1_Frame_25
+    - name: Frame_25
       frameIndex: 25
+      additiveSortOrder: 0
       cellRect:
         x: -244
         y: -180
         width: 774
         height: 353
       spriteId: 2d1c4d6ca0e9b4ba8a24fe34dbe5298e
-    - name: VFX Blood Batch 1_Frame_26
+    - name: Frame_26
       frameIndex: 26
+      additiveSortOrder: 0
       cellRect:
         x: -268
         y: -180
         width: 798
         height: 382
       spriteId: b064d4d6d70b34bec927ae285bc2e441
-    - name: VFX Blood Batch 1_Frame_27
+    - name: Frame_27
       frameIndex: 27
+      additiveSortOrder: 0
       cellRect:
         x: -285
         y: -180
         width: 815
         height: 384
       spriteId: 4334fbb26ede8481cb01852a08b8159e
-    - name: VFX Blood Batch 1_Frame_28
+    - name: Frame_28
       frameIndex: 28
+      additiveSortOrder: 0
       cellRect:
         x: -288
         y: -180
         width: 818
         height: 383
       spriteId: cdad3567846834a449ba6d8f5a16eb32
-    - name: VFX Blood Batch 1_Frame_29
+    - name: Frame_29
       frameIndex: 29
+      additiveSortOrder: 0
       cellRect:
         x: -290
         y: -180
         width: 820
         height: 382
       spriteId: 7fd22a5ce009c46e886ab541c8bdfeb7
-    - name: VFX Blood Batch 1_Frame_30
+    - name: Frame_30
       frameIndex: 30
+      additiveSortOrder: 0
       cellRect:
         x: -291
         y: -180
         width: 821
         height: 382
       spriteId: 088bca830924646aa9f7db41cdedf018
-    - name: VFX Blood Batch 1_Frame_31
+    - name: Frame_31
       frameIndex: 31
+      additiveSortOrder: 0
       cellRect:
         x: -290
         y: -180
         width: 820
         height: 382
       spriteId: a5bea27aef794440ca07416ebde5b443
-    - name: VFX Blood Batch 1_Frame_32
+    - name: Frame_32
       frameIndex: 32
+      additiveSortOrder: 0
       cellRect:
         x: -287
         y: -180
         width: 817
         height: 382
       spriteId: 83365beb420ec444396ced5d15ad2336
-    - name: VFX Blood Batch 1_Frame_33
+    - name: Frame_33
       frameIndex: 33
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: 36255fcaf6ce34076b910595eebda84a
-    - name: VFX Blood Batch 1_Frame_34
+    - name: Frame_34
       frameIndex: 34
+      additiveSortOrder: 0
       cellRect:
         x: -117
         y: -180
         width: 647
         height: 300
       spriteId: b4e01bbd1d8ab47fa84918ca6bd76a83
-    - name: VFX Blood Batch 1_Frame_35
+    - name: Frame_35
       frameIndex: 35
+      additiveSortOrder: 0
       cellRect:
         x: -149
         y: -180
         width: 679
         height: 326
       spriteId: 656bf883b8d68447e81cad00d55a6fb0
-    - name: VFX Blood Batch 1_Frame_36
+    - name: Frame_36
       frameIndex: 36
+      additiveSortOrder: 0
       cellRect:
         x: -152
         y: -180
         width: 682
         height: 355
       spriteId: 7ea28b0f2220e4117954110a33e30b9b
-    - name: VFX Blood Batch 1_Frame_37
+    - name: Frame_37
       frameIndex: 37
+      additiveSortOrder: 0
       cellRect:
         x: -152
         y: -180
         width: 682
         height: 357
       spriteId: 0a8d094fc49cf4b70bf5feca865b8c59
-    - name: VFX Blood Batch 1_Frame_38
+    - name: Frame_38
       frameIndex: 38
+      additiveSortOrder: 0
       cellRect:
         x: -153
         y: -180
         width: 683
         height: 356
       spriteId: 2cfbc2ff547404492964e643239a70b0
-    - name: VFX Blood Batch 1_Frame_39
+    - name: Frame_39
       frameIndex: 39
+      additiveSortOrder: 0
       cellRect:
         x: -154
         y: -180
         width: 684
         height: 355
       spriteId: 06a25bd12075749828de76b9bb69ab93
-    - name: VFX Blood Batch 1_Frame_40
+    - name: Frame_40
       frameIndex: 40
+      additiveSortOrder: 0
       cellRect:
         x: -154
         y: -180
         width: 684
         height: 355
       spriteId: a76e75b07224045709e905983eda9278
-    - name: VFX Blood Batch 1_Frame_41
+    - name: Frame_41
       frameIndex: 41
+      additiveSortOrder: 0
       cellRect:
         x: -153
         y: -180
         width: 683
         height: 355
       spriteId: b2c5cef82c0af45ccad23fda9ba843fd
-    - name: VFX Blood Batch 1_Frame_42
+    - name: Frame_42
       frameIndex: 42
+      additiveSortOrder: 0
       cellRect:
         x: -153
         y: -180
         width: 683
         height: 355
       spriteId: 5f59ecefb7f4546f7862352dd297f39d
-    - name: VFX Blood Batch 1_Frame_43
+    - name: Frame_43
       frameIndex: 43
+      additiveSortOrder: 0
       cellRect:
         x: -153
         y: -180
         width: 683
         height: 355
       spriteId: ed368e95ebdb748fdbcd83a1862b4453
-    - name: VFX Blood Batch 1_Frame_44
+    - name: Frame_44
       frameIndex: 44
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 355
       spriteId: f23abb57d492e4af3becb853c41e2665
-    - name: VFX Blood Batch 1_Frame_45
+    - name: Frame_45
       frameIndex: 45
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: 95a6b359482a44819b79e61db1cd8460
-    - name: VFX Blood Batch 1_Frame_46
+    - name: Frame_46
       frameIndex: 46
+      additiveSortOrder: 0
       cellRect:
         x: -230
         y: -180
         width: 760
         height: 300
       spriteId: 60edbc2a5e3bb44c69275b6d52b0a7c4
-    - name: VFX Blood Batch 1_Frame_47
+    - name: Frame_47
       frameIndex: 47
+      additiveSortOrder: 0
       cellRect:
         x: -262
         y: -180
         width: 792
         height: 337
       spriteId: dd1ad63f0a1494d528420d93186388b6
-    - name: VFX Blood Batch 1_Frame_48
+    - name: Frame_48
       frameIndex: 48
+      additiveSortOrder: 0
       cellRect:
         x: -265
         y: -180
         width: 795
         height: 366
       spriteId: a3865325792d6425caab0e653c31afaf
-    - name: VFX Blood Batch 1_Frame_49
+    - name: Frame_49
       frameIndex: 49
+      additiveSortOrder: 0
       cellRect:
         x: -265
         y: -180
         width: 795
         height: 368
       spriteId: efae5cc8a33824c609360640c2435c5f
-    - name: VFX Blood Batch 1_Frame_50
+    - name: Frame_50
       frameIndex: 50
+      additiveSortOrder: 0
       cellRect:
         x: -266
         y: -180
         width: 796
         height: 367
       spriteId: 5be46d4ba6e49449eb3ec2106fbba082
-    - name: VFX Blood Batch 1_Frame_51
+    - name: Frame_51
       frameIndex: 51
+      additiveSortOrder: 0
       cellRect:
         x: -267
         y: -180
         width: 797
         height: 366
       spriteId: 20c9a9396ac024c05aa3089180b6b8dd
-    - name: VFX Blood Batch 1_Frame_52
+    - name: Frame_52
       frameIndex: 52
+      additiveSortOrder: 0
       cellRect:
         x: -267
         y: -180
         width: 797
         height: 366
       spriteId: 87165f8916ba841dc92f366481a48aac
-    - name: VFX Blood Batch 1_Frame_53
+    - name: Frame_53
       frameIndex: 53
+      additiveSortOrder: 0
       cellRect:
         x: -266
         y: -180
         width: 796
         height: 366
       spriteId: 9f9df972a075a444c87490230cd6f5f6
-    - name: VFX Blood Batch 1_Frame_54
+    - name: Frame_54
       frameIndex: 54
+      additiveSortOrder: 0
       cellRect:
         x: -266
         y: -180
         width: 796
         height: 366
       spriteId: 1328e768e3c004d51b6cbb1fc2c63589
-    - name: VFX Blood Batch 1_Frame_55
+    - name: Frame_55
       frameIndex: 55
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: 2601dc08763ea47e1a9944415a68d0e6
-    - name: VFX Blood Batch 1_Frame_56
+    - name: Frame_56
       frameIndex: 56
+      additiveSortOrder: 0
       cellRect:
         x: -114
         y: -180
         width: 644
         height: 302
       spriteId: 7081bfbc189cb4231b1c1c82551c4ddc
-    - name: VFX Blood Batch 1_Frame_57
+    - name: Frame_57
       frameIndex: 57
+      additiveSortOrder: 0
       cellRect:
         x: -146
         y: -180
         width: 676
         height: 416
       spriteId: 8a5ddd94910a7479eb01169b36503728
-    - name: VFX Blood Batch 1_Frame_58
+    - name: Frame_58
       frameIndex: 58
+      additiveSortOrder: 0
       cellRect:
         x: -149
         y: -180
         width: 679
         height: 445
       spriteId: 6f93ba5598f4140a8963499c87260e7a
-    - name: VFX Blood Batch 1_Frame_59
+    - name: Frame_59
       frameIndex: 59
+      additiveSortOrder: 0
       cellRect:
         x: -149
         y: -180
         width: 679
         height: 447
       spriteId: edbdba91818ef4664bfaa159c12d6acc
-    - name: VFX Blood Batch 1_Frame_60
+    - name: Frame_60
       frameIndex: 60
+      additiveSortOrder: 0
       cellRect:
         x: -150
         y: -180
         width: 680
         height: 446
       spriteId: 77585ccb4ec1d42bc85cb3e4d31c5481
-    - name: VFX Blood Batch 1_Frame_61
+    - name: Frame_61
       frameIndex: 61
+      additiveSortOrder: 0
       cellRect:
         x: -151
         y: -180
         width: 681
         height: 445
       spriteId: 75a77fff2c30a4d04abc9ec8547e8ab9
-    - name: VFX Blood Batch 1_Frame_62
+    - name: Frame_62
       frameIndex: 62
+      additiveSortOrder: 0
       cellRect:
         x: -151
         y: -180
         width: 681
         height: 445
       spriteId: 257a90d6ac43b4fe7a163e353a3aa77a
-    - name: VFX Blood Batch 1_Frame_63
+    - name: Frame_63
       frameIndex: 63
+      additiveSortOrder: 0
       cellRect:
         x: -150
         y: -180
         width: 680
         height: 445
       spriteId: 74d582cc71ced429bb20626d4b72f8d1
-    - name: VFX Blood Batch 1_Frame_64
+    - name: Frame_64
       frameIndex: 64
+      additiveSortOrder: 0
       cellRect:
         x: -150
         y: -180
         width: 680
         height: 445
       spriteId: 3c13fb9de79cc4577aba48b5b0f5ee9e
-    - name: VFX Blood Batch 1_Frame_65
+    - name: Frame_65
       frameIndex: 65
+      additiveSortOrder: 0
       cellRect:
         x: -150
         y: -180
         width: 680
         height: 445
       spriteId: 76f047023b45b4fcd981fe92a4746569
-    - name: VFX Blood Batch 1_Frame_66
+    - name: Frame_66
       frameIndex: 66
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 445
       spriteId: 4f3b11236f387486a879d399349a1757
-    - name: VFX Blood Batch 1_Frame_67
+    - name: Frame_67
       frameIndex: 67
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 415
       spriteId: 0e79416f6b65b432caea75b8e93df945
-    - name: VFX Blood Batch 1_Frame_68
+    - name: Frame_68
       frameIndex: 68
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: 427483ec6a4b84c46ad3aaba7cf73ad5
-    - name: VFX Blood Batch 1_Frame_69
+    - name: Frame_69
       frameIndex: 69
+      additiveSortOrder: 0
       cellRect:
         x: -238
         y: -180
         width: 768
         height: 300
       spriteId: ca07b3f15f8dc4503903f45f0bb372cd
-    - name: VFX Blood Batch 1_Frame_70
+    - name: Frame_70
       frameIndex: 70
+      additiveSortOrder: 0
       cellRect:
         x: -241
         y: -180
         width: 771
         height: 300
       spriteId: bc50d919393ad49f2ae20514ea80ce70
-    - name: VFX Blood Batch 1_Frame_71
+    - name: Frame_71
       frameIndex: 71
+      additiveSortOrder: 0
       cellRect:
         x: -241
         y: -180
         width: 771
         height: 300
       spriteId: d88d254ad45ed4ed9adfbfb1df58a1dc
-    - name: VFX Blood Batch 1_Frame_72
+    - name: Frame_72
       frameIndex: 72
+      additiveSortOrder: 0
       cellRect:
         x: -242
         y: -180
         width: 772
         height: 300
       spriteId: 7bd872d1c1e4f4bc0be9fa75fbe43522
-    - name: VFX Blood Batch 1_Frame_73
+    - name: Frame_73
       frameIndex: 73
+      additiveSortOrder: 0
       cellRect:
         x: -243
         y: -180
         width: 773
         height: 300
       spriteId: e15ec1e983f284b32bfa64f065f7bf08
-    - name: VFX Blood Batch 1_Frame_74
+    - name: Frame_74
       frameIndex: 74
+      additiveSortOrder: 0
       cellRect:
         x: -243
         y: -180
         width: 773
         height: 300
       spriteId: 48d0145a6dfd84d3fbdd25a495db8556
-    - name: VFX Blood Batch 1_Frame_75
+    - name: Frame_75
       frameIndex: 75
+      additiveSortOrder: 0
       cellRect:
         x: -242
         y: -180
         width: 772
         height: 300
       spriteId: 89cabb17a13b1424a9ea09be8e176476
-    - name: VFX Blood Batch 1_Frame_76
+    - name: Frame_76
       frameIndex: 76
+      additiveSortOrder: 0
       cellRect:
         x: -242
         y: -180
         width: 772
         height: 300
       spriteId: 4ffb2adbb507b4e8eb1dd07354f2c1ff
-    - name: VFX Blood Batch 1_Frame_77
+    - name: Frame_77
       frameIndex: 77
+      additiveSortOrder: 0
       cellRect:
         x: -242
         y: -180
         width: 772
         height: 300
       spriteId: ee15cc58520344bfb9bc39d1d5cb026e
-    - name: VFX Blood Batch 1_Frame_78
+    - name: Frame_78
       frameIndex: 78
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: a46a619eac9154def9234e177f55d49e
-    - name: VFX Blood Batch 1_Frame_79
+    - name: Frame_79
       frameIndex: 79
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: e95e4753f8c914741a08ed4fc2764dec
-    - name: VFX Blood Batch 1_Frame_80
+    - name: Frame_80
       frameIndex: 80
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: db15bd4a2c57b48c4ad961d2cd9683a2
-    - name: VFX Blood Batch 1_Frame_81
+    - name: Frame_81
       frameIndex: 81
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: 4a7f502cb91e94072ae3d76cf28fc8c3
-    - name: VFX Blood Batch 1_Frame_82
+    - name: Frame_82
       frameIndex: 82
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: 33d89ba546ef640189c45bfff8555feb
-    - name: VFX Blood Batch 1_Frame_83
+    - name: Frame_83
       frameIndex: 83
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: fad793fa1fed94aeeadd60f1bbab589c
-    - name: VFX Blood Batch 1_Frame_84
+    - name: Frame_84
       frameIndex: 84
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 302
       spriteId: 94ebfa2d8c12d4683834bf4c434d3c3b
-    - name: VFX Blood Batch 1_Frame_85
+    - name: Frame_85
       frameIndex: 85
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 416
       spriteId: a30d8c47516a242ecb79d5bb0f18534c
-    - name: VFX Blood Batch 1_Frame_86
+    - name: Frame_86
       frameIndex: 86
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 445
       spriteId: 067c84fd53784401c84151c92b281ee5
-    - name: VFX Blood Batch 1_Frame_87
+    - name: Frame_87
       frameIndex: 87
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 447
       spriteId: a74c3cbece7434d24aad24f42addb7dd
-    - name: VFX Blood Batch 1_Frame_88
+    - name: Frame_88
       frameIndex: 88
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 446
       spriteId: e850b1c1de01449fda8c5ee5b5421f22
-    - name: VFX Blood Batch 1_Frame_89
+    - name: Frame_89
       frameIndex: 89
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 445
       spriteId: 4329a530c90b94ff88e95ce7a048e518
-    - name: VFX Blood Batch 1_Frame_90
+    - name: Frame_90
       frameIndex: 90
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 445
       spriteId: 515803f1afd5e4839820667d80441ceb
-    - name: VFX Blood Batch 1_Frame_91
+    - name: Frame_91
       frameIndex: 91
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 445
       spriteId: 8ac5984153f004c6b8a2e5250111ce37
-    - name: VFX Blood Batch 1_Frame_92
+    - name: Frame_92
       frameIndex: 92
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 445
       spriteId: b5a52e5dfe64c4e708814537c45c88af
-    - name: VFX Blood Batch 1_Frame_93
+    - name: Frame_93
       frameIndex: 93
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 445
       spriteId: 9ee91ad13450845539dba57f36672b15
-    - name: VFX Blood Batch 1_Frame_94
+    - name: Frame_94
       frameIndex: 94
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: e89183e6fc98145ddae73f713b020f35
-    - name: VFX Blood Batch 1_Frame_95
+    - name: Frame_95
       frameIndex: 95
+      additiveSortOrder: 0
       cellRect:
         x: -244
         y: -180
         width: 774
         height: 303
       spriteId: a62ccc35ee5d44db3b1ab18cdf2189ca
-    - name: VFX Blood Batch 1_Frame_96
+    - name: Frame_96
       frameIndex: 96
+      additiveSortOrder: 0
       cellRect:
         x: -276
         y: -180
         width: 806
         height: 417
       spriteId: 7b2f0280b1d5348acaa71b03afdaea51
-    - name: VFX Blood Batch 1_Frame_97
+    - name: Frame_97
       frameIndex: 97
+      additiveSortOrder: 0
       cellRect:
         x: -279
         y: -180
         width: 809
         height: 446
       spriteId: f358948c4bbc642d7963c724e83016d4
-    - name: VFX Blood Batch 1_Frame_98
+    - name: Frame_98
       frameIndex: 98
+      additiveSortOrder: 0
       cellRect:
         x: -279
         y: -180
         width: 809
         height: 448
       spriteId: e48d5627008064456ad41b72ca49c828
-    - name: VFX Blood Batch 1_Frame_99
+    - name: Frame_99
       frameIndex: 99
+      additiveSortOrder: 0
       cellRect:
         x: -280
         y: -180
         width: 810
         height: 447
       spriteId: 5e0855cb629fc472e83942e7a8e65d7b
-    - name: VFX Blood Batch 1_Frame_100
+    - name: Frame_100
       frameIndex: 100
+      additiveSortOrder: 0
       cellRect:
         x: -281
         y: -180
         width: 811
         height: 446
       spriteId: 623f2fd442dce430a8ef9c3c7af93a58
-    - name: VFX Blood Batch 1_Frame_101
+    - name: Frame_101
       frameIndex: 101
+      additiveSortOrder: 0
       cellRect:
         x: -281
         y: -180
         width: 811
         height: 446
       spriteId: 18e728bba51a74e1cbeae800c02d9813
-    - name: VFX Blood Batch 1_Frame_102
+    - name: Frame_102
       frameIndex: 102
+      additiveSortOrder: 0
       cellRect:
         x: -280
         y: -180
         width: 810
         height: 446
       spriteId: 0a195c5d8338b4198a5d375f2d5971d7
-    - name: VFX Blood Batch 1_Frame_103
+    - name: Frame_103
       frameIndex: 103
+      additiveSortOrder: 0
       cellRect:
         x: -280
         y: -180
         width: 810
         height: 446
       spriteId: 244cde25238084f47b1a57a3d91eadba
-    - name: VFX Blood Batch 1_Frame_104
+    - name: Frame_104
       frameIndex: 104
+      additiveSortOrder: 0
       cellRect:
         x: -280
         y: -180
         width: 810
         height: 446
       spriteId: e0e65f105a51847e9aecfd121ea6d800
-    - name: VFX Blood Batch 1_Frame_105
+    - name: Frame_105
       frameIndex: 105
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 446
       spriteId: 869d1d1fdc20544b797abb87004eac0b
-    - name: VFX Blood Batch 1_Frame_106
+    - name: Frame_106
       frameIndex: 106
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 416
       spriteId: 9fa4efe52abe34932b5f87525f13434a
-    - name: VFX Blood Batch 1_Frame_107
+    - name: Frame_107
       frameIndex: 107
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: 0246d9f6d312e40e993337e607960604
-    - name: VFX Blood Batch 1_Frame_108
+    - name: Frame_108
       frameIndex: 108
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180
         width: 640
         height: 300
       spriteId: e6f31e8bc66274f1d8a2d967d7cae525
-    - name: VFX Blood Batch 1_Frame_109
+    - name: Frame_109
       frameIndex: 109
+      additiveSortOrder: 0
       cellRect:
         x: -110
         y: -180

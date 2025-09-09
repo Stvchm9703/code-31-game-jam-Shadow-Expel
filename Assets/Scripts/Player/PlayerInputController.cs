@@ -116,6 +116,7 @@ public class PlayerMoveInputController : MonoBehaviour
     private Vector3 _rawMovementInput;
     // private Ray _spotLightRay;
 
+    private PlayerSoundFXController _soundFXController;
 
     // private UIController _uiController;
     // private Rigidbody rb;
@@ -130,6 +131,8 @@ public class PlayerMoveInputController : MonoBehaviour
         Transform transform1 = this.transform;
         if (this._animationController == null) this._animationController = transform1.GetComponent<AnimationController>();
         this._playerInventoryController = transform1.GetComponent<PlayerInventoryController>();
+        this._soundFXController = transform1.GetComponent<PlayerSoundFXController>();
+        
         this._lightTransform = transform1.Find("LampLight");
         this.playerState = PlayerState.Idle;
         this._mainCamera = Camera.main;
@@ -187,11 +190,11 @@ public class PlayerMoveInputController : MonoBehaviour
         }
     }
 
-    private IEnumerable Attack()
-    {
-        yield return new WaitForSeconds(0.5f);
-        this.isAttack = false;
-    }
+    // private IEnumerable Attack()
+    // {
+    //     yield return new WaitForSeconds(0.5f);
+    //     this.isAttack = false;
+    // }
 
     private void MovementUpdate(float deltaTime = 0.02f)
     {
@@ -238,6 +241,7 @@ public class PlayerMoveInputController : MonoBehaviour
             this.playerState = PlayerState.Move;
 
         this.UpdateAnimation();
+        this._soundFXController.PlaySoundFX(SoundFXType.Walk);
     }
 
     public void onDash(InputAction.CallbackContext context)
@@ -251,6 +255,7 @@ public class PlayerMoveInputController : MonoBehaviour
             this.isDashing = this.dashGasCount > 0f;
             this.isDodging = this.dashGasCount > 0f;
             this.AnimationSpeedChange(5f);
+            this._soundFXController.PlaySoundFX(SoundFXType.Dash);
         }
         else
         {
@@ -261,7 +266,7 @@ public class PlayerMoveInputController : MonoBehaviour
         // }
     }
 
-    
+
 
     // public virtual void DetectHitted()
     // {
@@ -276,12 +281,12 @@ public class PlayerMoveInputController : MonoBehaviour
     //     //
     //
     //
-    //     
+    //
     //     if (hitsNumInRange > 0)
     //         foreach (RaycastHit hitted in this._spotLightRaycastHits)
     //         {
     //             if (!hitted.collider) continue;
-    //             
+    //
     //             Vector3 directionToHit = hitted.point - this._spotLightRay.origin;
     //             float angleToHit = Vector2.Angle(
     //                 new Vector2(_spotLightRay.direction.x , this._spotLightRay.direction.z),
@@ -295,8 +300,8 @@ public class PlayerMoveInputController : MonoBehaviour
     //             // float angle = Vector3.Angle(this._spotLightRay.direction, this.transform.position );
     //             // Debug.Log("possible hitted: " + directionToHit + "  norm: " + directionToHit.normalized);
     //             // Debug.Log("orig hitted: " + this._spotLightRay.direction + "  norm: " + this._spotLightRay.direction.normalized);
-    //             Debug.Log("angleToHit : " + Math.Abs(angleToHit - angleToHitA));  
-    //             Debug.Log("angleToHit : " + angleToHit + " "+ angleToHitA);  
+    //             Debug.Log("angleToHit : " + Math.Abs(angleToHit - angleToHitA));
+    //             Debug.Log("angleToHit : " + angleToHit + " "+ angleToHitA);
     //             // Debug.Log("raw_angle: " + this._rawFacingAngle);
     //             // Debug.Log("Hitted: " + hitted.collider.gameObject.name + "  angle: " + angleToHit + "  raw_angle: " + this._rawFacingAngle);
     //
@@ -370,6 +375,7 @@ public class PlayerMoveInputController : MonoBehaviour
             this.isAttack = true;
             this.playerState = PlayerState.Attack;
             this._lightTransform.GetComponent<LightModeSwitch>().SwitchLightMode(1);
+            this._soundFXController.PlaySoundFX(SoundFXType.Attack);
         }
         else
         {
@@ -381,6 +387,7 @@ public class PlayerMoveInputController : MonoBehaviour
         }
 
         if (context.performed) this.UpdateAnimation();
+        
     }
 
     private void InteractAction(InputAction.CallbackContext context, float ctx)

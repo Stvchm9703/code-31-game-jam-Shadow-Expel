@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.SceneManagement;
 
 public class UIController : MonoBehaviour
 {
@@ -41,15 +42,15 @@ public class UIController : MonoBehaviour
         {
             Debug.Log("Pause Game start");
             pauseMenu.SetActive(true);
-            this.playerInput.SwitchCurrentActionMap("UI");
+            // this.playerInput.SwitchCurrentActionMap("UI");
         }
         
         else if (newGameState == GameState.InGame)
         {
             Debug.Log("Pause Game resume");
-           // if (this.gameOverScreen) gameOverScreen.SetActive(false);
+           if (this.gameOverScreen) gameOverScreen.SetActive(false);
             pauseMenu.SetActive(false);
-            this.playerInput.SwitchCurrentActionMap("main_action");
+            // this.playerInput.SwitchCurrentActionMap("main_action");
         }
         
         else if (newGameState == GameState.InventoryMenu)
@@ -58,7 +59,7 @@ public class UIController : MonoBehaviour
             // gameOverScreen.SetActive(false);
             pauseMenu.SetActive(false);
             invertoryMenu.SetActive(true);
-            this.playerInput.SwitchCurrentActionMap("UI");
+            // this.playerInput.SwitchCurrentActionMap("UI");
             
 
             // this.playerInput.SwitchCurrentActionMap("inventory_menu");
@@ -96,4 +97,18 @@ public class UIController : MonoBehaviour
         Debug.Log("Echo : Hello World");
     }
     
+    public void LevelSelect()
+    {
+        SceneManager.LoadScene("LevelSelection");
+    }
+    
+    public void ManiMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+    
+    public void Quit()
+    {
+        Application.Quit();
+    }
 }

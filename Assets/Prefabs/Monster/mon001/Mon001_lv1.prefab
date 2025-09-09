@@ -322,7 +322,7 @@ MonoBehaviour:
   isPaused: 0
   target: {x: 0, y: 0, z: 0}
   moveSpeed: 3
-  updateRate: 3.5
+  updateRate: 4.5
   plane: {fileID: 0}
   monsterSkin: {fileID: 2800000, guid: 30fd63930318f49648e90633a82a9782, type: 3}
   isPlayerDetected: 0

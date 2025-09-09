@@ -1,34 +1,32 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using Unity.Cinemachine;
 using UnityEngine;
-using Cinemachine;
-using UnityEngine.Rendering.Universal;
 
 public class Teleport : MonoBehaviour
 {
     public Transform target;
     public BoxCollider cameraBounds;
     public CinemachineConfiner cameraConfiner;
-    GameObject player;
-    
+
+    private GameObject player;
+
     public delegate void TeleportAction();
+
     public event TeleportAction OnTeleports;
+
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        this.player = GameObject.FindWithTag("Player");    
+        this.player = GameObject.FindWithTag("Player");
     }
 
     // Update is called once per frame
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject == player)
+        if (other.gameObject == this.player)
         {
-            player.transform.position = target.position;
-            cameraConfiner.m_BoundingVolume = cameraBounds;
-            
-            OnTeleports?.Invoke();
+            this.player.transform.position = this.target.position;
+            this.cameraConfiner.m_BoundingVolume = this.cameraBounds;
+            this.OnTeleports?.Invoke();
         }
     }
 }

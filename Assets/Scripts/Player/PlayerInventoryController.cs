@@ -1,14 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Entities.UI;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using Object = UnityEngine.Object;
 
 [Serializable]
 public struct InventoryItem
 {
-    string id;
+    public string uid;
     public string name;
     [TextArea(15,20)] 
     public string description;
@@ -20,84 +24,107 @@ public struct InventoryItem
 public class PlayerInventoryController : MonoBehaviour
 {
     public int MaxInventorySize = 12;
-    public List<InventoryItem> InventoryItems;
-    public List<GameObject> InventoryItemsGO;
+    public List<InventoryItem> inventoryItems;
+    // public List<GameObject> InventoryItemsGO;
     
     public Canvas InventoryUI;
     // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-    
+    public TextMeshProUGUI text;
+    public int targetCount;
+    public string targetScene;
     public void AddItem(InventoryItem item)
     {
-        if (InventoryItems.Count < MaxInventorySize)
+        var index = this.inventoryItems.FindIndex(i => i.uid == item.uid);
+        if (index != -1)
         {
-            InventoryItems.Add(item);
+            // Debug.Log(this.inventoryItems[index].count);
+            InventoryItem inventoryItem = this.inventoryItems[index];
+            inventoryItem.count += item.count;
+            this.inventoryItems[index] = inventoryItem;
         }
+        else if ( index == -1 && this.inventoryItems.Count < MaxInventorySize)
+        {
+            this.inventoryItems.Add(item);
+        }
+        else
+        {
+            Debug.Log("Inventory is full");
+        }
+        
+        if (item.uid == "quest_item")
+        {
+            var currentCount = this.inventoryItems.Find(i => i.uid == "quest_item").count;
+            text.text =  currentCount + "/" + targetCount;
+            if (currentCount == targetCount)
+            {
+                // Exit the level
+                SceneManager.LoadScene(targetScene);
+            }
+        }
+        
+        Debug.Log("InventoryItems" );
+        Debug.Log(inventoryItems);
     }
     
     public void RemoveItem(InventoryItem item)
     {
-        if (InventoryItems.Contains(item))
+        var existingItem = this.inventoryItems.Find(i => i.uid == item.uid);
+        if (!existingItem.IsUnityNull())
         {
-            InventoryItems.Remove(item);
+            existingItem.count -= item.count;
+        } 
+        if (this.inventoryItems.Count == 0)
+        {
+            this.inventoryItems.Remove(item);
         }
     }
     
     public void RemoveItem(int index)
     {
-        if (index < InventoryItems.Count)
+        if (index < this.inventoryItems.Count)
         {
-            InventoryItems.RemoveAt(index);
+            this.inventoryItems.RemoveAt(index);
         }
     }
     
     public void ClearInventory()
     {
-        InventoryItems.Clear();
+        this.inventoryItems.Clear();
     }
     
     public void UseItem(InventoryItem item)
     {
         // Use the item
-        if (InventoryItems.Contains(item))
+        if (this.inventoryItems.Contains(item))
         {
             item.count--;
             if (item.count <= 0)
             {
-                InventoryItems.Remove(item);
+                this.inventoryItems.Remove(item);
             }
         }
     }
     
     public void UseItem(int index)
     {
-        if (index < InventoryItems.Count)
+        if (index < this.inventoryItems.Count)
         {
-            var item = InventoryItems[index];
+            var item = this.inventoryItems[index];
             item.count--;
             if (item.count <= 0)
             {
-                InventoryItems.Remove(item);
+                this.inventoryItems.Remove(item);
             }
         }
     }
     
     public void UseItem(string name)
     {
-        var item = InventoryItems.Find(i => i.name == name);
+        var item = this.inventoryItems.Find(i => i.name == name);
         item.count--;
         if (item.count <= 0)
         {
-            InventoryItems.Remove(item);
+            this.inventoryItems.Remove(item);
         }
     }
     

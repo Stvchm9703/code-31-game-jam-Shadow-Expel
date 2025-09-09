@@ -1,0 +1,71 @@
+.panel {
+    -unity-background-image-tint-color: rgb(163, 181, 249);
+    background-color: rgba(255, 251, 251, 0);
+    -unity-background-scale-mode: stretch-to-fill;
+    background-image: url("project://database/Assets/images/ui/background/711337.jpg?fileID=2800000&guid=0eaa4a9c76f0a2a44aac5a553b4b0ae4&type=3#711337");
+    align-items: center;
+}
+
+.menu {
+    align-items: center;
+    width: 50%;
+    height: 50%;
+    justify-content: flex-start;
+    background-color: rgba(88, 78, 78, 0);
+    visibility: visible;
+}
+
+.unity-text-element {
+    -unity-font-definition: url("project://database/Assets/Fonts/Flesh%20Wound.ttf?fileID=12800000&guid=f5c196d8f03c37b4cacb9994fddc85f3&type=3#Flesh Wound");
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    font-size: 150px;
+    -unity-font-style: normal;
+    color: rgb(255, 195, 0);
+    -unity-text-align: middle-center;
+    -unity-text-outline-color: rgba(183, 52, 52, 0);
+}
+
+.unity-button {
+    position: relative;
+    align-items: stretch;
+    width: 100%;
+    left: auto;
+    bottom: auto;
+    justify-content: flex-start;
+    flex-grow: 1;
+    flex-shrink: 5;
+    border-top-left-radius: 80px;
+    border-top-right-radius: 80px;
+    border-bottom-right-radius: 80px;
+    border-bottom-left-radius: 80px;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    margin-top: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    background-color: rgba(53, 8, 11, 0.61);
+    border-top-width: 10px;
+    border-right-width: 10px;
+    border-bottom-width: 10px;
+    border-left-width: 10px;
+}
+
+.unity-button:hover {
+    background-color: rgba(251, 255, 0, 0);
+    scale: 1.05 1.05;
+    transition-property: scale;
+    transition-duration: 0.1s;
+    transition-timing-function: ease;
+}
+
+.unity-button:active {
+    transition-property: scale;
+    transition-duration: 0.1s;
+    background-color: rgba(7, 213, 12, 0.2);
+}

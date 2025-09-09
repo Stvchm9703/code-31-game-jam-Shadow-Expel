@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/main-menu.uss?fileID=7433441132597879392&amp;guid=d2975abc61e596148acf32b56b1dccd3&amp;type=3#main-menu" />
+    <ui:VisualElement name="Panel" class="panel" style="flex-grow: 1; background-color: rgba(168, 136, 136, 0);">
+        <ui:VisualElement name="Container" class="menu" style="flex-grow: 1; background-color: rgba(62, 1, 0, 0); height: 80px; max-height: none; width: 70%; justify-content: flex-start; flex-basis: auto; border-top-left-radius: 80px; border-top-right-radius: 80px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
+            <ui:VisualElement name="Logo" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/images/ui/background/bkgrd.jpg?fileID=2800000&amp;guid=b0a0bf0b8f7373644a6e9e98f1888fc2&amp;type=3#bkgrd&quot;); background-color: rgb(0, 0, 0); -unity-background-image-tint-color: rgba(255, 255, 255, 0.78); align-items: center; width: 100%; height: 20%; -unity-background-scale-mode: scale-and-crop; border-top-left-radius: 80px; border-top-right-radius: 80px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;" />
+            <ui:Button text="Play" name="Play" enable-rich-text="true" style="-unity-text-align: middle-center; border-top-left-radius: 80px; border-top-right-radius: 80px; border-left-color: rgb(92, 96, 70); border-right-color: rgb(92, 96, 70); border-top-color: rgb(92, 96, 70); border-bottom-color: rgb(92, 96, 70); color: rgb(157, 134, 61);" />
+            <ui:Button text="Levels Select" name="LevelSelect" style="border-left-color: rgb(92, 96, 70); border-right-color: rgb(92, 96, 70); border-top-color: rgb(92, 96, 70); border-bottom-color: rgb(92, 96, 70); color: rgb(157, 134, 61);" />
+            <ui:Button text="Quit" name="Quit" style="border-bottom-right-radius: 80px; border-bottom-left-radius: 80px; border-left-color: rgb(92, 96, 70); border-right-color: rgb(92, 96, 70); border-top-color: rgb(92, 96, 70); border-bottom-color: rgb(92, 96, 70); text-shadow: 0 0 0 rgba(236, 62, 62, 0); color: rgb(157, 134, 61);" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

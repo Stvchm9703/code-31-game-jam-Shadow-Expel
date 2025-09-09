@@ -12,20 +12,22 @@ public class LightModeSwitch : MonoBehaviour
     public Light lampLightComponent;
 
     public CapsuleCollider lampLightCollider;
-    
+
     public int powerCellCount;
 
-    public float lampLightMaxIntensity = 1500f,  lampLightMinIntensity = 700f;
+    public float lampLightMaxIntensity = 1500f, lampLightMinIntensity = 700f;
     public float lampLightMaxRange = 8f, lampLightMinRange = 2f;
 
     public float lampLightMaxPower = 100f;
-    [SerializeField] private float lampLightPower = 100f;
 
+    [SerializeField]
+    private float lampLightPower = 100f;
 
+    
     // Start is called before the first frame update
     public StatusAnimationController statusAnimationController;
 
-    
+    public bool isLimitBattery = false;
 
     private void Start()
     {
@@ -50,11 +52,18 @@ public class LightModeSwitch : MonoBehaviour
 
         // torch power comsumption
         if (this.lightMode == 0)
+        {
             // recharge 
-            this.lampLightPower = Math.Clamp(this.lampLightPower + (deltaTime / 30f), 0f, this.lampLightMaxPower);
+            if (this.isLimitBattery == false)
+            {
+                this.lampLightPower = Math.Clamp(this.lampLightPower + (0.1f), 0f, this.lampLightMaxPower);
+            }
+        }
         else if (this.lightMode == 1)
+        {
             // consume
-            this.lampLightPower = Math.Clamp(this.lampLightPower - (deltaTime / 15f), 0f, this.lampLightMaxPower);
+            this.lampLightPower = Math.Clamp(this.lampLightPower - (0.3f), 0f, this.lampLightMaxPower);
+        }
 
         var power = this.lampLightPower / this.lampLightMaxPower;
         statusAnimationController.UpdateTorchPowerBar(power);
@@ -70,7 +79,6 @@ public class LightModeSwitch : MonoBehaviour
             this.lampLightComponent.intensity = Mathf.Lerp(this.lampLightMinIntensity, this.lampLightMaxIntensity, power);
             // this.lampLightComponent.range = Mathf.Lerp(this.lampLightMinRange, this.lampLightMaxRange, power);
             lampLightCollider.height = Mathf.Lerp(2f, 5f, power);
-
         }
         else if (power < 0.2)
         {
@@ -87,7 +95,7 @@ public class LightModeSwitch : MonoBehaviour
             this.TorchLightSwitch(true);
             this.LampLightSwitch(false);
         }
-        else if (this.lightMode == 1)
+        else if (this.lightMode == 1 && this.lampLightPower > 0)
         {
             this.TorchLightSwitch(false);
             this.LampLightSwitch(true);
@@ -112,5 +120,10 @@ public class LightModeSwitch : MonoBehaviour
     {
         // var light = this.lampLight.GetComponent<Light>();
         this.lampLight.SetActive(on);
+    }
+    
+    public void AddPowerCell(int count)
+    {
+        this.lampLightPower = Math.Clamp(this.lampLightPower + count * 10, 0f, this.lampLightMaxPower);
     }
 }

@@ -1,0 +1,193 @@
+alicetaria.png
+size:1024,1024
+filter:Linear,Linear
+belt Copy
+bounds:303,138,182,60
+body_down_base Copy
+bounds:708,553,133,127
+body_down_cloth Copy
+bounds:569,531,143,137
+rotate:90
+body_up_base Copy
+bounds:843,556,124,106
+offsets:1,0,125,107
+rotate:90
+body_up_inner Copy
+bounds:180,143,121,137
+offsets:0,0,121,139
+dress_1 Copy
+bounds:319,697,183,256
+offsets:1,0,184,256
+rotate:90
+dress_2 Copy
+bounds:577,676,204,127
+rotate:90
+dress_3 Copy
+bounds:2,33,95,275
+dress_base Copy
+bounds:2,745,315,277
+ear Copy
+bounds:703,340,48,79
+offsets:0,1,49,80
+rotate:90
+eye_left_1 Copy
+bounds:973,735,56,33
+rotate:90
+eye_left_2 Copy
+bounds:421,2,44,41
+offsets:1,0,45,41
+eye_left_3 Copy
+bounds:825,179,31,38
+offsets:0,1,31,39
+rotate:90
+eye_left_4 Copy
+bounds:180,282,45,25
+offsets:3,2,48,29
+eye_left_5 Copy
+bounds:116,12,31,15
+offsets:4,0,35,16
+eye_right_1 Copy
+bounds:781,212,83,30
+offsets:0,0,83,31
+eye_right_2 Copy
+bounds:235,700,54,43
+eye_right_3 Copy
+bounds:781,176,34,42
+offsets:0,0,110,42
+rotate:90
+eye_right_4 Copy
+bounds:706,810,70,16
+offsets:0,1,72,17
+rotate:90
+eye_right_5 Copy
+bounds:291,707,36,16
+offsets:0,1,38,17
+rotate:90
+hair_back Copy
+bounds:235,282,171,233
+rotate:90
+hair_back_ring Copy
+bounds:99,29,95,96
+hair_band_1 Copy
+bounds:289,14,39,130
+rotate:90
+hair_band_2 Copy
+bounds:569,497,32,121
+rotate:90
+hair_band_3 Copy
+bounds:706,734,57,265
+rotate:90
+hair_band_4 Copy
+bounds:706,682,50,249
+offsets:1,0,51,249
+rotate:90
+hair_base Copy
+bounds:729,793,284,229
+hair_front_1 Copy
+bounds:483,516,84,179
+offsets:1,0,85,179
+hair_front_2 Copy
+bounds:303,200,80,161
+offsets:1,0,82,161
+rotate:90
+hair_front_3 Copy
+bounds:196,9,91,132
+hair_front_4 Copy
+bounds:470,273,180,72
+rotate:90
+hair_side_1 Copy
+bounds:2,310,129,433
+offsets:0,0,130,433
+hair_side_2 Copy
+bounds:133,309,100,434
+head_base_part Copy 2
+bounds:235,455,246,240
+offsets:2,0,249,240
+jack_right_back Copy
+bounds:487,124,74,135
+rotate:90
+jacket_left Copy
+bounds:466,200,71,126
+rotate:90
+jacket_left_back Copy
+bounds:487,45,77,132
+rotate:90
+jacket_right Copy
+bounds:546,445,50,114
+offsets:25,1,75,116
+rotate:90
+lamp_1
+bounds:544,332,72,111
+lamp_2
+bounds:544,286,83,44
+lamp_3
+bounds:660,206,50,56
+lamp_4
+bounds:662,452,35,43
+left_hand_a Copy
+bounds:784,314,88,82
+left_hand_b Copy 2
+bounds:618,343,100,83
+rotate:90
+left_hand_c Copy
+bounds:629,264,77,72
+offsets:1,1,78,73
+rotate:90
+left_hand_d Copy 2
+bounds:621,56,72,66
+offsets:1,0,74,66
+left_hand_front_set_2
+bounds:594,200,64,62
+left_hand_shoulder Copy
+bounds:712,194,70,67
+rotate:90
+left_leg_a Copy
+bounds:708,491,60,131
+offsets:0,0,61,131
+rotate:90
+left_leg_b Copy
+bounds:957,551,65,181
+left_leg_c_front Copy
+bounds:424,57,79,61
+rotate:90
+light_normal
+bounds:74,2,25,40
+rotate:90
+light_torch_1
+bounds:2,2,70,29
+offsets:1,1,72,31
+light_torch_2
+bounds:769,146,28,28
+offsets:1,1,30,30
+mouth Copy
+bounds:1015,998,24,7
+rotate:90
+right_hand_a Copy 5
+bounds:703,390,77,99
+right_hand_b Copy 8
+bounds:782,398,80,91
+right_hand_c Copy 8
+bounds:703,266,77,72
+offsets:0,1,78,73
+right_hand_d Copy 5
+bounds:695,126,72,66
+offsets:1,0,74,66
+right_hand_front_set_1
+bounds:624,124,74,69
+rotate:90
+right_hand_front_set_2
+bounds:483,455,61,59
+offsets:1,1,64,62
+right_hand_shoulder Copy 2
+bounds:695,59,69,65
+right_leg_a Copy
+bounds:289,55,81,133
+rotate:90
+right_leg_b Copy
+bounds:99,127,79,180
+right_leg_c_front Copy
+bounds:782,244,77,68
+sword
+bounds:319,882,140,408
+offsets:1,1,142,410
+rotate:90

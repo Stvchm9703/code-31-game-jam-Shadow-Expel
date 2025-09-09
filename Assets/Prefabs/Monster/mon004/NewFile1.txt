@@ -1,0 +1,26 @@
+Map1 (
+    CameraBoundary {
+        scale : Vector3(14, 1.5,    10)
+     position : Vector3(6,  4,  -4.5)
+    }
+    
+    Ground {
+        scale : Vector3(2,  1,  1);
+     position : Vector3(6,  -4, 0.5)
+    }
+)
+
+
+Map2 (
+    CameraBoundary {
+        scale : Vector3(28,1.5,8)
+     position : Vector3(8,4,0)
+    }
+    
+    Ground {
+        scale : Vector3(3.5,1,2)
+     position : Vector3(0.5,-4,0.5)
+    }
+)
+
+35 - 6 

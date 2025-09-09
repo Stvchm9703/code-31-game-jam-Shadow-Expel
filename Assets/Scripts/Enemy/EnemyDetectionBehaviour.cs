@@ -31,7 +31,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     //
     public bool isPaused;
 
-    GameObject _player;
+    protected GameObject _player;
 
     public Vector3 target; // Reference to the player's transform
     public float moveSpeed = 7.5f; // Speed at which the enemy moves towards the player
@@ -54,18 +54,18 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public List<Transform> patrolPoints;
 
-    public LayerMask detectionLayer;
+    public LayerMask detectionLayer ; //=  LayerMask.GetMask("character", "wall");
     private readonly RaycastHit[] _lookingRaycastHits = new RaycastHit[5];
 
     public bool faceDirection => (this.target.x - this.transform.position.x) > 0;
 
-    Coroutine _currentCoroutine;
+    // Coroutine _currentCoroutine;
 
     [SerializeField] private List<AudioClip> _attackSound, _demageSound, _dieSound, _idleSound;
     // AudioSource _audioSource;
     // body collider
 
-    StateMachine _stateMachine;
+    protected StateMachine _stateMachine;
     
     [SerializeField] 
     public string State => this._stateMachine.ActiveState.ToString();
@@ -122,6 +122,11 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
         this.target = this.transform.position;
 
+        if (this.detectionLayer.value == 0)
+        {
+            this.detectionLayer = LayerMask.GetMask("character", "wall");
+        }
+
         this._player = GameObject.FindGameObjectWithTag("Player");
         // this.lookingRay = new Ray(this.transform.position, this.transform.forward);
         // this._currentCoroutine = this.StartCoroutine("CoroutineUpdate");
@@ -135,19 +140,19 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
         this._stateMachine.AddState("Die", new CoState(this, this.Die , loop: false));
 
         this._stateMachine.AddTriggerTransitionFromAny("OnTakeDemage", "TakeDemage");
-        this._stateMachine.AddTriggerTransitionFromAny("OnDie", "Die", t => this.health <= 0);
+        this._stateMachine.AddTriggerTransitionFromAny("OnDie", "Die", t => this.health <= 0, forceInstantly:true);
 
         this._stateMachine.AddTwoWayTransition("Patrol", "Detected", t => this.isPlayerDetected);
 
-        this._stateMachine.AddTriggerTransitionFromAny("OnAttack", "Attack", t => this.inAttackRange);
+        this._stateMachine.AddTransitionFromAny("Attack", t => this.inAttackRange);
         // this._stateMachine.AddTwoWayTransition("Detected", "Attack", t => this.inAttackRange);
         // this._stateMachine.AddTwoWayTransition("Attack", "Patrol", t => !this.inAttackRange);
-        this._stateMachine.AddTwoWayTransition("TakeDemage", "Detected", t => this.isDemageProcess == false);
+        this._stateMachine.AddTwoWayTransition("TakeDemage", "Detected", t => this.isDemageProcess == false, forceInstantly:true);
 
         this._stateMachine.SetStartState("Patrol");
         this._stateMachine.Init();
     }
-
+    
 
     public void OnDestroy()
     {
@@ -164,36 +169,48 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
             this.DetectPlayer(Time.fixedDeltaTime);
             this.CheckAttack();
             // Debug.DrawRay(this.lookingRay.origin, this.lookingRay.direction * this.detectionRange, Color.red);
+            if (this._stateMachine.ActiveState == null)
+            {
+                this._stateMachine.SetStartState("Patrol");
+                this._stateMachine.Init();
+            }
             this._stateMachine.OnLogic();
+        }
+        else
+        {
+            this._stateMachine.OnExit();
+            // Debug.Log(this._stateMachine.ActiveState.name);
         }
         // Debug.Log(this._stateMachine.ActiveState.name);
     }
 
-    public IEnumerator CoroutineUpdate()
-    {
-        while (true)
-        {
-            // Debug.Log("CoroutineUpdate");
-            if (this.isPaused == false)
-            {
-                if (!this.isPlayerDetected)
-                    this.StartCoroutine("CausalBehaviour");
-                else
-                    this.UpdateTarget();
-            }
-            else
-            {
-                yield return new WaitUntil(() => this.isPaused == false);
-            }
-
-            yield return new WaitForSeconds(this.updateRate);
-        }
-    }
+    // public IEnumerator CoroutineUpdate()
+    // {
+    //     while (true)
+    //     {
+    //         // Debug.Log("CoroutineUpdate");
+    //         if (this.isPaused == false)
+    //         {
+    //             if (!this.isPlayerDetected)
+    //                 this.StartCoroutine("CausalBehaviour");
+    //             else
+    //                 this.UpdateTarget();
+    //         }
+    //         else
+    //         {
+    //             yield return new WaitUntil(() => this.isPaused == false);
+    //         }
+    //
+    //         yield return new WaitForSeconds(this.updateRate);
+    //     }
+    // }
 
     public void OnGameStateChanged(GameState newGameState)
     {
         this.isPaused = newGameState == GameState.Paused || newGameState == GameState.GameOver;
         // Debug.Log("should update " + this.isPaused);
+        // if (this.isPaused) this._stateMachine.OnExit();
+        // else this._stateMachine.OnEnter();
     }
 
     public virtual void DetectPlayer(float timeChange)
@@ -247,24 +264,31 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public virtual IEnumerator CausalBehaviour()
     {
-        // Debug.Log("Causal Behaviour");
-        int randomPointIndex = Random.Range(0, this.patrolPoints.Count);
-        var pos = this.patrolPoints[randomPointIndex].position;
-        var randomPoint = new Vector3(
-            pos.x,
-            this.transform.position.y,
-            pos.z
-        );
-        this.target = randomPoint;
+        if (this.patrolPoints.Count > 0)
+        {
+            // Debug.Log("Causal Behaviour");
+            int randomPointIndex = Random.Range(0, this.patrolPoints.Count);
+            var pos = this.patrolPoints[randomPointIndex].position;
+            var randomPoint = new Vector3(
+                pos.x,
+                this.transform.position.y,
+                pos.z
+            );
+            this.target = randomPoint;
+        }
         PlayIdleSound();
         yield return new WaitForSeconds(this.updateRate * 0.3f);
     }
+
     public void PlayIdleSound()
     {
+        if (this._idleSound.Count == 0) return;
         // Play idle sound
         var randomIndex = Random.Range(0, this._idleSound.Count);
         SoundFXManager.Instance.PlaySoundFX(this._idleSound[randomIndex], this.transform, 0.25f, this.updateRate * 0.3f);
+    
     }
+
     public virtual void UpdateTarget()
     {
 
@@ -301,6 +325,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public void PlayAttackSFX()
     {
+        if (this._attackSound.Count == 0) return;
         // Play attack animation
         var randomIndex = Random.Range(0, this._attackSound.Count);
         SoundFXManager.Instance.PlaySoundFX(this._attackSound[randomIndex], this.transform);
@@ -342,9 +367,10 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
 
     public void PlayTakeDemageSFX()
     {
+        if (this._demageSound.Count == 0) return;
         // Play damage animation
         var randomIndex = Random.Range(0, this._demageSound.Count);
-        SoundFXManager.Instance.PlaySoundFX(this._demageSound[randomIndex], this.transform);
+        SoundFXManager.Instance.PlaySoundFX(this._demageSound[randomIndex], this.transform);    
     }
 
     public void ResetAfterDemage()
@@ -372,6 +398,7 @@ public abstract class IEnemyDetectBehaviour : MonoBehaviour
     }
     public virtual void PlayDieSound()
     {
+        if (this._dieSound.Count == 0) return;
         var randomIndex = Random.Range(0, this._dieSound.Count);
         SoundFXManager.Instance.PlaySoundFX(this._dieSound[randomIndex], this.transform);
     }

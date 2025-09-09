@@ -122,7 +122,16 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   animatedSpriteImportData: []
   spriteSheetImportData: []
-  asepriteLayers: []
+  asepriteLayers:
+  - layerIndex: 0
+    guid: -863648064
+    name: gdb-gamepad-2
+    layerFlags: 0
+    layerType: 0
+    blendMode: 0
+    cells: []
+    linkedCells: []
+    parentIndex: -1
   platformSettings: []
   generatePhysicsShape: 0
   secondarySpriteTextures: []

@@ -490,144 +490,162 @@ ScriptedImporter:
     layerType: 0
     blendMode: 0
     cells:
-    - name: VFX Blood Concepts_Frame_0
+    - name: Frame_0
       frameIndex: 0
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: -190
         width: 384
         height: 384
       spriteId: 90983bf499db349349c378c544c33b04
-    - name: VFX Blood Concepts_Frame_1
+    - name: Frame_1
       frameIndex: 1
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: -190
         width: 384
         height: 384
       spriteId: 6567fa2d53a4c450ba484707586605f8
-    - name: VFX Blood Concepts_Frame_2
+    - name: Frame_2
       frameIndex: 2
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: -190
         width: 384
         height: 384
       spriteId: 30580b80be15d4a3198709050a386ef1
-    - name: VFX Blood Concepts_Frame_3
+    - name: Frame_3
       frameIndex: 3
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: -190
         width: 384
         height: 384
       spriteId: c62ae9ae93a9f4023a6c71b12bbed2c1
-    - name: VFX Blood Concepts_Frame_4
+    - name: Frame_4
       frameIndex: 4
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: -190
         width: 384
         height: 384
       spriteId: bb8c66440e9de49829780a33e89d3349
-    - name: VFX Blood Concepts_Frame_5
+    - name: Frame_5
       frameIndex: 5
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: -190
         width: 384
         height: 384
       spriteId: adeb432750da240d3a4bbc96b2c1783d
-    - name: VFX Blood Concepts_Frame_6
+    - name: Frame_6
       frameIndex: 6
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: -190
         width: 384
         height: 384
       spriteId: 13dffeddb37c54976b67ed2029b4385d
-    - name: VFX Blood Concepts_Frame_7
+    - name: Frame_7
       frameIndex: 7
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: -190
         width: 384
         height: 384
       spriteId: 4be453056cdf342b6abc22bd4e420262
-    - name: VFX Blood Concepts_Frame_8
+    - name: Frame_8
       frameIndex: 8
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: -190
         width: 384
         height: 384
       spriteId: 8d527d708da4c4e7d8e6336d3efe3415
-    - name: VFX Blood Concepts_Frame_9
+    - name: Frame_9
       frameIndex: 9
+      additiveSortOrder: 0
       cellRect:
         x: -285
         y: -190
         width: 669
         height: 384
       spriteId: ac9c5bee4ce244d658d1a67af21c62f7
-    - name: VFX Blood Concepts_Frame_10
+    - name: Frame_10
       frameIndex: 10
+      additiveSortOrder: 0
       cellRect:
         x: -285
         y: -190
         width: 669
         height: 384
       spriteId: d39ee024d06cc4d64be1b54309ca0255
-    - name: VFX Blood Concepts_Frame_11
+    - name: Frame_11
       frameIndex: 11
+      additiveSortOrder: 0
       cellRect:
         x: -286
         y: -190
         width: 670
         height: 384
       spriteId: 38a604e4f546c4330835847807e57aa4
-    - name: VFX Blood Concepts_Frame_12
+    - name: Frame_12
       frameIndex: 12
+      additiveSortOrder: 0
       cellRect:
         x: -286
         y: -190
         width: 670
         height: 384
       spriteId: 87c2953b3ac584e058200465d7099f2c
-    - name: VFX Blood Concepts_Frame_13
+    - name: Frame_13
       frameIndex: 13
+      additiveSortOrder: 0
       cellRect:
         x: -286
         y: -190
         width: 670
         height: 384
       spriteId: 20e79bc54aa89411f8975c788f41b934
-    - name: VFX Blood Concepts_Frame_14
+    - name: Frame_14
       frameIndex: 14
+      additiveSortOrder: 0
       cellRect:
         x: -284
         y: -190
         width: 668
         height: 384
       spriteId: 6d780e84c3f034957bbd0941f187a230
-    - name: VFX Blood Concepts_Frame_15
+    - name: Frame_15
       frameIndex: 15
+      additiveSortOrder: 0
       cellRect:
         x: -284
         y: -190
         width: 668
         height: 384
       spriteId: 2afea376afead4cbdaee539d44c77d75
-    - name: VFX Blood Concepts_Frame_16
+    - name: Frame_16
       frameIndex: 16
+      additiveSortOrder: 0
       cellRect:
         x: -284
         y: -190
         width: 668
         height: 384
       spriteId: 2b1eb71aa5219431cbe6072e2043e5d0
-    - name: VFX Blood Concepts_Frame_17
+    - name: Frame_17
       frameIndex: 17
+      additiveSortOrder: 0
       cellRect:
         x: 0
         y: -190

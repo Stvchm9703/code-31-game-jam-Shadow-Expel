@@ -28,16 +28,16 @@ public class PlayerStatus : MonoBehaviour
         // Update the status bars
         statusAnimationController.UpdateHpBar((float) health / maxHealth);
         statusAnimationController.UpdateDashBar(this.dashPercent);
-        
+        if (this.health <= 0)
+        {
+            GameStateManager.Instance.SetState(GameState.GameOver);
+        }
     }
     
     public void TakeDamage(float damage)
     {
-        
+        Debug.Log("Player take damage");
         this.health -= damage;
-        if (this.health <= 0)
-        {
-            // this.Die();
-        }
+       
     }
 }
